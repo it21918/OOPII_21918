@@ -14,11 +14,11 @@ public class Main {
 	// City
 	// calculates which traveler gets the free ticket.
 	public static void 	calculateFreeTicket(ArrayList<Traveller> travellers, City obj) {
-		double max = travellers.get(0).calculate_similarity(obj);
+		double max = travellers.get(0).calculateSimilarity(obj);
 		int maxPos = 0;
 		for (int i = 1; i < travellers.size(); i++) {
-			if (max < travellers.get(i).calculate_similarity(obj)) {
-				max = travellers.get(i).calculate_similarity(obj);
+			if (max < travellers.get(i).calculateSimilarity(obj)) {
+				max = travellers.get(i).calculateSimilarity(obj);
 				maxPos = i;
 			}
 		}
@@ -210,9 +210,9 @@ public class Main {
 			try {
 				int number = input.nextInt();
 				if (number == 1) {
-					System.out.println(travellers.get(0).compare_cities(city).getCityName());
+					System.out.println(travellers.get(0).compareCities(city).getCityName());
 				} else {
-					cities = travellers.get(0).compare_cities(city, number);
+					cities = travellers.get(0).compareCities(city, number);
 					for (int i = 0; i < cities.size(); i++) {
 						System.out.println(cities.get(i).getCityName());
 					}

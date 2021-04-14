@@ -22,7 +22,7 @@ public class Young_traveller extends Traveller {
 	}
 
 	@Override
-	double similarity_terms_vector(City obj) {
+	double similarityTermsVector(City obj) {
 		double sumInterseption = 0, sumUnion = 0;
 
 		for (int i = 0; i < 10; i++) {
@@ -41,10 +41,10 @@ public class Young_traveller extends Traveller {
 	}
 
 	@Override
-	double calculate_similarity(City obj) {
+	double calculateSimilarity(City obj) {
 		double distance = distance(obj.getGeodesicLat(), obj.getGeodesicLon(), getCoordinatesLat(),
 				getCoordinatesLon());
-		return p * similarity_terms_vector(obj) + (1 - p) * similarity_geodesic_vector(distance);
+		return p * similarityTermsVector(obj) + (1 - p) * similarityGeodesicVector(distance);
 	}
 
 }

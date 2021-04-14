@@ -21,7 +21,7 @@ public class Elder_traveller extends Traveller {
 	}
 
 	@Override
-	public double similarity_terms_vector(City obj) {
+	public double similarityTermsVector(City obj) {
 		double sum = 0;
 		for (int i = 0; i < 10; i++) {
 			sum = sum + Math.pow(obj.getTermsVector(i) - getRatingsOfInterests(i), 2);
@@ -30,10 +30,10 @@ public class Elder_traveller extends Traveller {
 	}
 
 	@Override
-	public double calculate_similarity(City obj) {
+	public double calculateSimilarity(City obj) {
 		double distance = distance(obj.getGeodesicLat(), obj.getGeodesicLon(), getCoordinatesLat(),
 				getCoordinatesLon());
-		return p * similarity_terms_vector(obj) + (1 - p) * similarity_geodesic_vector(distance);
+		return p * similarityTermsVector(obj) + (1 - p) * similarityGeodesicVector(distance);
 	}
 
 }

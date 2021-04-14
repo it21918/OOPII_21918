@@ -21,10 +21,10 @@ import gr.hua.dit.oopii.weather.OpenWeatherMap;
 public abstract class Traveller {
 
 	/* This vector contains the ratings of the user from 0-10 for the nouns */
-	private Vector<Integer> terms_vector = new Vector<Integer>(10);
+	private Vector<Integer> termsVector = new Vector<Integer>(10);
 
 	/* This vector contains the latitude and longitude (lat, lon) of his/her City */
-	private Vector<Double> geodesic_vector = new Vector<Double>(2);
+	private Vector<Double> geodesicVector = new Vector<Double>(2);
 
 	private String vatNumber;
 	private int age;
@@ -77,11 +77,11 @@ public abstract class Traveller {
 
 	/* This method adds an integer from 0 to 10 to the terms_vector */
 	public void addRatingOfterms(int term) {
-		if (terms_vector.size() >= 10) {
+		if (termsVector.size() >= 10) {
 			System.out.println("Out of bounds, you can't enter more than 10 ratings");
 			return;
 		}
-		terms_vector.add(term);
+		termsVector.add(term);
 	}
 
 	/* This method removes a rating from the terms_vector in the position pos */
@@ -90,28 +90,28 @@ public abstract class Traveller {
 			System.out.println("Out of bounds, you can't remove that rating");
 			return;
 		}
-		terms_vector.remove(pos);
+		termsVector.remove(pos);
 	}
 
 	/* This method removes all the ratings from the terms_vector */
 	public void removeRatingsOfTerms() {
-		terms_vector.removeAllElements();
+		termsVector.removeAllElements();
 	}
 
 	/* This method returns all the ratings from the terms_vector */
 	public Vector<Integer> getRatingsOfInterests() {
-		return terms_vector;
+		return termsVector;
 	}
 
 	public Integer getRatingsOfInterests(int pos) {
-		return terms_vector.get(pos);
+		return termsVector.get(pos);
 	}
 
 	/* This method adds the lat and lon of the City the user is currently */
 	public void addLocation(Double lat, Double lon) {
-		if (geodesic_vector.isEmpty()) {
-			geodesic_vector.add(lat);
-			geodesic_vector.add(lon);
+		if (geodesicVector.isEmpty()) {
+			geodesicVector.add(lat);
+			geodesicVector.add(lon);
 			return;
 		}
 		System.out.println("You have already entered your location.");
@@ -119,22 +119,22 @@ public abstract class Traveller {
 
 	/* This method removes the lat lon from geodesic_vector */
 	public void removeLocation() {
-		geodesic_vector.removeAllElements();
+		geodesicVector.removeAllElements();
 	}
 
 	/* This method returns the lat lon from the geodesic_vector */
 	public Vector<Double> getCoordinates() {
-		return geodesic_vector;
+		return geodesicVector;
 	}
 
 	/* This method returns the Lat of the City */
 	public Double getCoordinatesLat() {
-		return geodesic_vector.get(0);
+		return geodesicVector.get(0);
 	}
 
 	/* This method return the Lon of the City */
 	public Double getCoordinatesLon() {
-		return geodesic_vector.get(1);
+		return geodesicVector.get(1);
 	}
 
 	// The method retrieves the lat and lon of the user city.
@@ -160,15 +160,15 @@ public abstract class Traveller {
 	 * This abstract method calculates the similarity of the obj city according to
 	 * user terms_vector
 	 */
-	abstract double similarity_terms_vector(City obj);
+	abstract double similarityTermsVector(City obj);
 
-	abstract double calculate_similarity(City obj);
+	abstract double calculateSimilarity(City obj);
 
 	/*
 	 * It consulates the similarity_geodesic_vector between user city and the city
 	 * he wants to go
 	 */
-	public static double similarity_geodesic_vector(double distance) {
+	public static double similarityGeodesicVector(double distance) {
 		double maxdis = 15317; // Athens-Sydney
 		return log2(2 / (2 - distance / maxdis));
 	}
@@ -201,12 +201,12 @@ public abstract class Traveller {
 	}
 
 	// this method returns the object city with the max similarity.
-	public City compare_cities(ArrayList<City> cityObj) {
-		double max = calculate_similarity(cityObj.get(0));
+	public City compareCities(ArrayList<City> cityObj) {
+		double max = calculateSimilarity(cityObj.get(0));
 		int maxPosition = 0;
 		for (int i = 1; i < cityObj.size(); i++) {
-			if (max < calculate_similarity(cityObj.get(i))) {
-				max = calculate_similarity(cityObj.get(i));
+			if (max < calculateSimilarity(cityObj.get(i))) {
+				max = calculateSimilarity(cityObj.get(i));
 				maxPosition = i;
 			}
 		}
@@ -214,7 +214,7 @@ public abstract class Traveller {
 	}
 
 	// this method returns 2 to 5 cities in a raw according to the similarity.
-	public ArrayList<City> compare_cities(ArrayList<City> cityObj, int number) throws OutOfBounds {
+	public ArrayList<City> compareCities(ArrayList<City> cityObj, int number) throws OutOfBounds {
 		String limit = "1 to 5";
 		Collections.sort(cityObj, new SortBySimilarity());
 		ArrayList<City> newList = new ArrayList<City>();
@@ -231,7 +231,7 @@ public abstract class Traveller {
 	class SortBySimilarity implements Comparator<City> {
 		@Override
 		public int compare(City a, City b) {
-			return new Double(calculate_similarity(a)).compareTo(calculate_similarity(b));
+			return new Double(calculateSimilarity(a)).compareTo(calculateSimilarity(b));
 		}
 	}
 
