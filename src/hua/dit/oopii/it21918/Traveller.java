@@ -18,7 +18,7 @@ import hua.dit.oopii.exception.CountryException;
 import hua.dit.oopii.exception.OutOfBounds;
 import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
-public abstract class Traveller {
+public abstract class Traveller implements  Comparable<Traveller> {
 
 	/* This vector contains the ratings of the user from 0-10 for the nouns */
 	private Vector<Integer> termsVector = new Vector<Integer>(10);
@@ -30,6 +30,8 @@ public abstract class Traveller {
 	private int age;
 	private String cityName;
 	private String countryName;
+	private  long  timestamp;
+	private String visit;
 	private static final String appid = "6adefb3191788a7b0ffefbff19ba0448";
 
 	public Traveller() {
@@ -123,7 +125,7 @@ public abstract class Traveller {
 	}
 
 	/* This method returns the lat lon from the geodesic_vector */
-	public Vector<Double> getCoordinates() {
+	public Vector<Double> getLocation() {
 		return geodesicVector;
 	}
 
@@ -228,11 +230,37 @@ public abstract class Traveller {
 		return newList;
 	}
 
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long l) {
+		this.timestamp = l;
+	}
+
+	public String getVisit() {
+		return visit;
+	}
+
+	public void setVisit(String visit) {
+		this.visit = visit;
+	}
+
 	class SortBySimilarity implements Comparator<City> {
 		@Override
 		public int compare(City a, City b) {
 			return new Double(calculateSimilarity(a)).compareTo(calculateSimilarity(b));
 		}
 	}
-
+	
+	public int compareTo(Traveller traveller)
+    {
+		if(vatNumber.equals(traveller.vatNumber)) {
+			if(this.termsVector.equals(traveller.termsVector))
+			this.timestamp = 0;
+		}
+        return  (int) (this.timestamp - traveller.timestamp);
+    }
 }
+
+

@@ -13,5 +13,10 @@
 	<classpathentry kind="lib" path="src/jars/javax.ws.rs.jar"/>
 	<classpathentry kind="lib" path="src/jars/jersey-client-1.19.1.jar"/>
 	<classpathentry kind="lib" path="src/jars/jersey-core-1.19.1.jar"/>
+	<classpathentry kind="lib" path="src/jars/google-collections-1.0.jar"/>
+	<classpathentry kind="lib" path="src/jars/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="src/jars/mysql-connector-java-8.0.15.jar"/>
+	<classpathentry kind="lib" path="src/jars/mysql-connector-java-8.0.15-sources.jar"/>
+	<classpathentry kind="lib" path="src/jars/ojdbc6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

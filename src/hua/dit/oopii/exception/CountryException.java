@@ -12,6 +12,6 @@ public class CountryException extends Exception {
 
 	public String getMessage() {
 
-		return "The name of your country: " + country + " is wrong.";
+		return "The country's initials : " + country + " are wrong.";
 	}
 }
