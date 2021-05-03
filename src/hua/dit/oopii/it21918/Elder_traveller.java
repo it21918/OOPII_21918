@@ -1,5 +1,7 @@
 package hua.dit.oopii.it21918;
 
+import hua.dit.oopii.exception.OutOfBounds;
+
 //For ages between 60-115 
 public class Elder_traveller extends Traveller {
 	private final double p = 0.05;
@@ -7,7 +9,7 @@ public class Elder_traveller extends Traveller {
 	public Elder_traveller() {}
 
 	public Elder_traveller(int term1, int term2, int term3, int term4, int term5, int term6, int term7, int term8,
-			int term9, int term10) {
+			int term9, int term10) throws OutOfBounds {
 		addRatingOfterms(term1);
 		addRatingOfterms(term2);
 		addRatingOfterms(term3);

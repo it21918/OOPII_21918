@@ -78,11 +78,12 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	}
 
 	/* This method adds an integer from 0 to 10 to the terms_vector */
-	public void addRatingOfterms(int term) {
+	public void addRatingOfterms(int term) throws OutOfBounds {
 		if (termsVector.size() >= 10) {
 			System.out.println("Out of bounds, you can't enter more than 10 ratings");
 			return;
 		}
+		if(term>10 || term<0) throw new OutOfBounds(term,"0 to 10");
 		termsVector.add(term);
 	}
 
