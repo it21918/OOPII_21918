@@ -22,7 +22,13 @@ import hua.dit.oopii.exception.WikipediaNoArcticleException;
 
 public class Main {
 
-	// calculates which traveler gets the free ticket.
+	/*
+	 * calculates which traveler gets the free ticket. it defines as max the
+	 * similarity of the first traveler and then compares it with the similarity of
+	 * the other travelers. We keep the position of the traveler that has the max
+	 * similarity and print the VAT number which is in that position in the array of
+	 * the travelers
+	 */
 	public static void calculateFreeTicket(ArrayList<Traveller> travellers, City obj) {
 		double max = travellers.get(0).calculateSimilarity(obj);
 		int maxPos = 0;
@@ -36,6 +42,10 @@ public class Main {
 				+ " gets the free ticket.");
 	}
 
+	/*
+	 * This method checks if the string searchCities exists in the hash map of the
+	 * cities.
+	 */
 	public static boolean searchCity(String searchCities, HashMap<String, City> mapOfCities) {
 		for (String cities : mapOfCities.keySet()) {
 			if (searchCities.equals(cities)) {
@@ -72,7 +82,7 @@ public class Main {
 		Json json = new Json();
 		ArrayList<Traveller> travellers = new ArrayList<Traveller>();
 
-		// adds travellers from json file.
+		// adds travelers from JSON file.
 		try {
 			travellers = json.readJSON();
 		} catch (JsonParseException e) {
@@ -82,9 +92,8 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// System.out.println(travellers.get(0).getCityName());
 
-		// According to the traveller's age we create the traveller object.
+		// According to the traveller's age we create the traveler object.
 		java.util.Scanner input = new java.util.Scanner(System.in);
 		System.out.println("Enter your age.");
 
@@ -101,7 +110,7 @@ public class Main {
 					travellers.add(middle_traveller);
 
 				} else {
-					Elder_traveller elder_traveller = new Elder_traveller(4, 9,6, 9, 9, 8, 9, 9, 3, 9);
+					Elder_traveller elder_traveller = new Elder_traveller(9, 9, 9, 9, 9, 9, 9, 9, 9, 9);
 					travellers.add(elder_traveller);
 
 				}
@@ -122,8 +131,7 @@ public class Main {
 			}
 		}
 
-		// we retrieve the lat lot of the user city and give hard coding some info about
-		// him.
+		// we retrieve the lat lon of the user's city and give hard coding some info about him.
 		travellers.get(travellers.size() - 1).setVatNumber("AE000456789");
 		travellers.get(travellers.size() - 1).setCityName("tokyo");
 		travellers.get(travellers.size() - 1).setCountryName("jp");
@@ -157,16 +165,15 @@ public class Main {
 		ArrayList<String> searchCities = new ArrayList<String>();
 		Date date = new Date();
 
-		// The user add to arrayList searchCities the name of the cities the wants to
-		// compare.
+		// The user add to the array searchCities the cityName_countryName of the cities the wants to compare.
 		searchCities.add("tokyo_jp");
 		searchCities.add("delhi_in");
 		searchCities.add("shanghai_cn");
 		searchCities.add("cairo_eg");
 
-		// fix this and then send it
 		for (int i = 0; i < searchCities.size(); i++) {
 			if (!searchCity(searchCities.get(i), mapOfCities)) {
+				//If the city doesn't exist in the hash map of cities we add it. We save the city's name with lower case letters.
 				City objCity = new City(searchCities.get(i).split("_")[0], searchCities.get(i).split("_")[1]);
 				mapOfCities.put(searchCities.get(i), objCity);
 
@@ -179,13 +186,16 @@ public class Main {
 						System.out.println("Type the correct country's initial for the city "
 								+ mapOfCities.get(searchCities.get(i)).getCityName() + ":");
 						String country = stdin.readLine().toLowerCase();
-						mapOfCities.get(searchCities.get(i)).setCountryName(country);
 						
+						//we replace the country's name with the new one.
+						mapOfCities.get(searchCities.get(i)).setCountryName(country);
+						//we save the city to the object city obj and add the new key with the new country's name.
 						City obj = mapOfCities.remove(searchCities.get(i));
 						searchCities.set(i, obj.getCityName() + "_" + country);
 						
-						if(!searchCity(searchCities.get(i), mapOfCities))
-						mapOfCities.put(searchCities.get(i), obj);
+						//if the new key doesn't exist we add the city to the hash map.
+						if (!searchCity(searchCities.get(i), mapOfCities))
+							mapOfCities.put(searchCities.get(i), obj);
 						continue;
 					} catch (UniformInterfaceException u) {
 						if (u.getMessage().contains("404")) {
@@ -195,12 +205,12 @@ public class Main {
 									+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
 							String cityName = stdin.readLine().toLowerCase();
 							mapOfCities.get(searchCities.get(i)).setCityName(cityName);
-							
+
 							City obj = mapOfCities.remove(searchCities.get(i));
-							searchCities.set(i,cityName + "_" + obj.getCountryName());
-							
-							if(!searchCity(searchCities.get(i), mapOfCities))
-							mapOfCities.put(searchCities.get(i), obj);
+							searchCities.set(i, cityName + "_" + obj.getCountryName());
+
+							if (!searchCity(searchCities.get(i), mapOfCities))
+								mapOfCities.put(searchCities.get(i), obj);
 							continue;
 						} else {
 							System.out.println("Something went wrong. Exiting from program");
@@ -230,7 +240,10 @@ public class Main {
 
 				}
 
-				if(!searchCity(searchCities.get(i), mapOfCities)) {continue;}
+				//if the city doesn't already exist we add it to the data base.
+				if (!searchCity(searchCities.get(i), mapOfCities)) {
+					continue;
+				}
 				dataBase.addDataToDB(searchCities.get(i), mapOfCities.get(searchCities.get(i)).getGeodesicLat(),
 						mapOfCities.get(searchCities.get(i)).getGeodesicLon(),
 						mapOfCities.get(searchCities.get(i)).getTermsVector(0),
@@ -245,9 +258,10 @@ public class Main {
 						mapOfCities.get(searchCities.get(i)).getTermsVector(9));
 
 			}
+			//we renew the timeStamp every time e search a new city for the traveler.
 			travellers.get(travellers.size() - 1).setTimestamp(date.getTime());
+			//we add the object city to the array list.
 			choosenCities.add(mapOfCities.get(searchCities.get(i)));
-			// System.out.println(choosenCities.get(i).getCityName());
 
 		}
 		System.out.println("how many cities that suit do you to see?");
@@ -287,16 +301,16 @@ public class Main {
 		Collections.sort(travellers);
 		for (int i = 0; i < travellers.size(); i++) {
 			if (travellers.get(i).getTimestamp() == 0) {
-				// System.out.println(travellers.get(i).getTimestamp() + " " +
-				// travellers.get(i).getVatNumber()+"
-				// "+travellers.get(i).getRatingsOfInterests());
 				travellers.remove(i);
 			}
+			 //System.out.println(travellers.get(i).getTimestamp() + " " +
+			// travellers.get(i).getVatNumber());
 		}
+		//we write the travelers to the JSON file.
 		json.writeJSON(travellers);
 
 		// We calculate which traveler will get the free ticket for he city in position
-		 //calculateFreeTicket(travellers, mapOfCities.get("athens_gr"));
+		// calculateFreeTicket(travellers, mapOfCities.get("athens_gr"));
 
 	}
 

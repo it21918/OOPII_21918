@@ -82,15 +82,15 @@ public class OracleDBServiceCRUD {
 		}
 	}
 
-	public void addDataToDB(String cityNameInitials, double lat, double lon, int term_1, int term_2, int term_3, int term_4, int term_5, int term_6, 
-			int term_7, int term_8, int term_9, int term_10) {
+	public void addDataToDB(String cityNameInitials, double lat, double lon, int term_1, int term_2, int term_3,
+			int term_4, int term_5, int term_6, int term_7, int term_8, int term_9, int term_10) {
 		makeJDBCConnection();
 
 		try {
-			String insertQueryStatement = "INSERT  INTO  CITIES  VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?)";			
+			String insertQueryStatement = "INSERT  INTO  CITIES  VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db_prep_obj = db_con_obj.prepareStatement(insertQueryStatement);
-			db_prep_obj.setString(1, cityNameInitials);//.setInt(1, newKey);//.setString
-			db_prep_obj.setDouble(2, lat);//.setInt(2, year);
+			db_prep_obj.setString(1, cityNameInitials);// .setInt(1, newKey);//.setString
+			db_prep_obj.setDouble(2, lat);// .setInt(2, year);
 			db_prep_obj.setDouble(3, lon);
 			db_prep_obj.setInt(4, term_1);
 			db_prep_obj.setInt(5, term_2);
@@ -101,8 +101,8 @@ public class OracleDBServiceCRUD {
 			db_prep_obj.setInt(10, term_7);
 			db_prep_obj.setInt(11, term_8);
 			db_prep_obj.setInt(12, term_9);
-			db_prep_obj.setInt(13, term_10);	
-			
+			db_prep_obj.setInt(13, term_10);
+
 			int numRowChanged = db_prep_obj.executeUpdate(); // either (1) the row count for SQL Data Manipulation
 																// Language (DML) statements or (2) 0 for SQL statements
 																// that return nothing

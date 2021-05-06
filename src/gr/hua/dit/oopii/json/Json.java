@@ -13,23 +13,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hua.dit.oopii.it21918.Traveller;
 
 public class Json {
-	  public void writeJSON(ArrayList<Traveller> in_arraylist) throws JsonGenerationException, JsonMappingException, IOException{
-	      ObjectMapper mapper = new ObjectMapper();	
-	      mapper.enableDefaultTyping();
-	      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	      AllTravellers data = new AllTravellers();
-	      data.setCollectionAllTravellers(in_arraylist);
-	      mapper.writeValue(new File("arraylist.json"), data);
-	   }
+	public void writeJSON(ArrayList<Traveller> in_arraylist)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enableDefaultTyping();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		AllTravellers data = new AllTravellers();
+		data.setCollectionAllTravellers(in_arraylist);
+		mapper.writeValue(new File("arraylist.json"), data);
+	}
 
-	public ArrayList<Traveller> readJSON() throws JsonParseException, JsonMappingException, IOException{
-	      ObjectMapper mapper = new ObjectMapper();   
-	      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	      mapper.enableDefaultTyping();
-	      AllTravellers data = mapper.readValue(new File("arraylist.json"), AllTravellers.class);
-	      return data.getCollectionAllTravellers();
-	   }
-    }
+	public ArrayList<Traveller> readJSON() throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.enableDefaultTyping();
+		AllTravellers data = mapper.readValue(new File("arraylist.json"), AllTravellers.class);
+		return data.getCollectionAllTravellers();
+	}
+}
 
 class AllTravellers {
 	private ArrayList<Traveller> collectionAllTravellers;

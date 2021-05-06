@@ -254,6 +254,9 @@ public abstract class Traveller implements  Comparable<Traveller> {
 		}
 	}
 	
+	//we sort the travelers depending in their timeStamp
+	//if they have the same VAT number and terms we change the timeStamp
+	//of the newest traveler to 0 .
 	public int compareTo(Traveller traveller)
     {
 		if(vatNumber.equals(traveller.vatNumber)) {
