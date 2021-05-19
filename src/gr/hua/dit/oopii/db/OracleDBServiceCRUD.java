@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import hua.dit.oopii.exception.OutOfBounds;
 import hua.dit.oopii.it21918.City;
 
 public class OracleDBServiceCRUD {
@@ -58,7 +59,7 @@ public class OracleDBServiceCRUD {
 
 	}
 
-	public void ReadData(HashMap<String, City> map) throws SQLException {
+	public void ReadData(HashMap<String, City> map) throws SQLException, OutOfBounds {
 		makeJDBCConnection();
 		db_prep_obj = db_con_obj.prepareStatement("select * from cities");
 		ResultSet rs = db_prep_obj.executeQuery();
@@ -68,16 +69,16 @@ public class OracleDBServiceCRUD {
 			city.setCityName(rs.getString("CITY_NAME_COUNTRY_INITIALS").split("_")[0]);
 			city.setCountryName(rs.getString("CITY_NAME_COUNTRY_INITIALS").split("_")[1]);
 			city.addGeodesicVector(rs.getDouble("LAT"), rs.getDouble("LON"));
-			city.setTermVector(rs.getInt("TERM_1"));
-			city.setTermVector(rs.getInt("TERM_2"));
-			city.setTermVector(rs.getInt("TERM_3"));
-			city.setTermVector(rs.getInt("TERM_4"));
-			city.setTermVector(rs.getInt("TERM_5"));
-			city.setTermVector(rs.getInt("TERM_6"));
-			city.setTermVector(rs.getInt("TERM_7"));
-			city.setTermVector(rs.getInt("TERM_8"));
-			city.setTermVector(rs.getInt("TERM_9"));
-			city.setTermVector(rs.getInt("TERM_10"));
+			city.setTermVector(0,rs.getInt("TERM_1"));
+			city.setTermVector(1,rs.getInt("TERM_2"));
+			city.setTermVector(2,rs.getInt("TERM_3"));
+			city.setTermVector(3,rs.getInt("TERM_4"));
+			city.setTermVector(4,rs.getInt("TERM_5"));
+			city.setTermVector(5,rs.getInt("TERM_6"));
+			city.setTermVector(6,rs.getInt("TERM_7"));
+			city.setTermVector(7,rs.getInt("TERM_8"));
+			city.setTermVector(8,rs.getInt("TERM_9"));
+			city.setTermVector(9,rs.getInt("TERM_10"));
 			map.put(rs.getString("CITY_NAME_COUNTRY_INITIALS"), city);
 		}
 	}

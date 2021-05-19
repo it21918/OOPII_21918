@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -54,7 +57,20 @@ public class Main {
 		}
 		return false;
 	}
-
+	
+	public static void seeTravellersNoDuplicates(ArrayList<Traveller> travellers) {
+				
+				ArrayList<String> newTravellersNoDuplicates = new ArrayList<String>();
+				for(int i=0 ; i<travellers.size() ; i++) {
+					newTravellersNoDuplicates.add(travellers.get(i).getVatNumber());
+				}
+				
+				Set<String> noDuplicatesSet = new LinkedHashSet<>(newTravellersNoDuplicates);
+				
+				System.out.println(noDuplicatesSet);
+		
+	}
+	
 	public static void main(String[] args)
 			throws IOException, WikipediaNoArcticleException, OutOfBounds, CountryException {
 
@@ -131,7 +147,8 @@ public class Main {
 			}
 		}
 
-		// we retrieve the lat lon of the user's city and give hard coding some info about him.
+		// we retrieve the lat lon of the user's city and give hard coding some info
+		// about him.
 		travellers.get(travellers.size() - 1).setVatNumber("AE000456789");
 		travellers.get(travellers.size() - 1).setCityName("tokyo");
 		travellers.get(travellers.size() - 1).setCountryName("jp");
@@ -165,15 +182,18 @@ public class Main {
 		ArrayList<String> searchCities = new ArrayList<String>();
 		Date date = new Date();
 
-		// The user add to the array searchCities the cityName_countryName of the cities the wants to compare.
+		// The user add to the array searchCities the cityName_countryName of the cities
+		// the wants to compare.
 		searchCities.add("tokyo_jp");
 		searchCities.add("delhi_in");
 		searchCities.add("shanghai_cn");
 		searchCities.add("cairo_eg");
+		searchCities.add("Dubai_ae");
 
 		for (int i = 0; i < searchCities.size(); i++) {
 			if (!searchCity(searchCities.get(i), mapOfCities)) {
-				//If the city doesn't exist in the hash map of cities we add it. We save the city's name with lower case letters.
+				// If the city doesn't exist in the hash map of cities we add it. We save the
+				// city's name with lower case letters.
 				City objCity = new City(searchCities.get(i).split("_")[0], searchCities.get(i).split("_")[1]);
 				mapOfCities.put(searchCities.get(i), objCity);
 
@@ -186,14 +206,15 @@ public class Main {
 						System.out.println("Type the correct country's initial for the city "
 								+ mapOfCities.get(searchCities.get(i)).getCityName() + ":");
 						String country = stdin.readLine().toLowerCase();
-						
-						//we replace the country's name with the new one.
+
+						// we replace the country's name with the new one.
 						mapOfCities.get(searchCities.get(i)).setCountryName(country);
-						//we save the city to the object city obj and add the new key with the new country's name.
+						// we save the city to the object city obj and add the new key with the new
+						// country's name.
 						City obj = mapOfCities.remove(searchCities.get(i));
 						searchCities.set(i, obj.getCityName() + "_" + country);
-						
-						//if the new key doesn't exist we add the city to the hash map.
+
+						// if the new key doesn't exist we add the city to the hash map.
 						if (!searchCity(searchCities.get(i), mapOfCities))
 							mapOfCities.put(searchCities.get(i), obj);
 						continue;
@@ -223,7 +244,6 @@ public class Main {
 
 				while (true) {
 					try {
-						mapOfCities.get(searchCities.get(i)).removeTermsVector();
 						mapOfCities.get(searchCities.get(i)).retrieveTermVectors(terms);
 						break;
 					} catch (WikipediaNoArcticleException e) {
@@ -240,27 +260,26 @@ public class Main {
 
 				}
 
-				//if the city doesn't already exist we add it to the data base.
+				// if the city doesn't already exist we add it to the data base.
 				if (!searchCity(searchCities.get(i), mapOfCities)) {
-					continue;
-				}
-				dataBase.addDataToDB(searchCities.get(i), mapOfCities.get(searchCities.get(i)).getGeodesicLat(),
-						mapOfCities.get(searchCities.get(i)).getGeodesicLon(),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(0),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(1),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(2),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(3),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(4),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(5),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(6),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(7),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(8),
-						mapOfCities.get(searchCities.get(i)).getTermsVector(9));
+					dataBase.addDataToDB(searchCities.get(i), mapOfCities.get(searchCities.get(i)).getGeodesicLat(),
+							mapOfCities.get(searchCities.get(i)).getGeodesicLon(),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(0),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(1),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(2),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(3),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(4),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(5),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(6),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(7),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(8),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(9));
+				} 
 
 			}
-			//we renew the timeStamp every time e search a new city for the traveler.
+			// we renew the timeStamp every time e search a new city for the traveler.
 			travellers.get(travellers.size() - 1).setTimestamp(date.getTime());
-			//we add the object city to the array list.
+			// we add the object city to the array list.
 			choosenCities.add(mapOfCities.get(searchCities.get(i)));
 
 		}
@@ -296,17 +315,21 @@ public class Main {
 				continue;
 			}
 		}
-
-		// we remove the duplicates and sort the travellers.
+		
+		// we remove the travellers with the same terms and VAT number and sort the travellers.
 		Collections.sort(travellers);
-		for (int i = 0; i < travellers.size(); i++) {
-			if (travellers.get(i).getTimestamp() == 0) {
-				travellers.remove(i);
+
+		Iterator<Traveller> itr = travellers.iterator();
+		while (itr.hasNext()) {
+			Traveller t = (Traveller) itr.next();
+			if (t.getTimestamp() == 0) {
+				itr.remove();
 			}
-			 //System.out.println(travellers.get(i).getTimestamp() + " " +
-			// travellers.get(i).getVatNumber());
 		}
-		//we write the travelers to the JSON file.
+		
+		seeTravellersNoDuplicates(travellers);
+
+		// we write the travelers to the JSON file.
 		json.writeJSON(travellers);
 
 		// We calculate which traveler will get the free ticket for he city in position

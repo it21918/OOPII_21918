@@ -14,6 +14,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import gr.hua.dit.oopii.wikipedia.MediaWiki;
 import hua.dit.oopii.exception.CountryException;
+import hua.dit.oopii.exception.OutOfBounds;
 import hua.dit.oopii.exception.WikipediaNoArcticleException;
 import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
@@ -24,13 +25,13 @@ public class City {
 	 * the words cafe, sea, museums, restaurant, stadium, beach, hotel, club,
 	 * sidewalks, mountains appeared in the wikipedia article
 	 */
-	private Vector<Integer> terms_vector = new Vector<Integer>(10);
+	private int[] terms_vector = new int[10];
 
 	/*
 	 * geodesic_vector contains 2 double numbers that represent the latitude and
 	 * longitude of the City
 	 */
-	private Vector<Double> geodesic_vector = new Vector<Double>(2);
+	private Double[] geodesic_vector = new Double[2];
 
 	private String cityName;
 	private String countryName;
@@ -56,16 +57,16 @@ public class City {
 	 */
 	public City(String name, String countryName, int term1, int term2, int term3, int term4, int term5, int term6,
 			int term7, int term8, int term9, int term10) {
-		terms_vector.add(term1);
-		terms_vector.add(term2);
-		terms_vector.add(term3);
-		terms_vector.add(term4);
-		terms_vector.add(term5);
-		terms_vector.add(term6);
-		terms_vector.add(term7);
-		terms_vector.add(term8);
-		terms_vector.add(term9);
-		terms_vector.add(term10);
+		terms_vector[0]=term1;
+		terms_vector[1]=term2;
+		terms_vector[3]=term3;
+		terms_vector[4]=term4;
+		terms_vector[5]=term5;
+		terms_vector[6]=term6;
+		terms_vector[7]=term7;
+		terms_vector[8]=term8;
+		terms_vector[9]=term9;
+		terms_vector[10]=term10;
 		this.cityName = name;
 		this.countryName = countryName;
 	}
@@ -76,18 +77,18 @@ public class City {
 	 */
 	public City(int term1, int term2, int term3, int term4, int term5, int term6, int term7, int term8, int term9,
 			int term10, double lat, double lon) {
-		terms_vector.add(term1);
-		terms_vector.add(term2);
-		terms_vector.add(term3);
-		terms_vector.add(term4);
-		terms_vector.add(term5);
-		terms_vector.add(term6);
-		terms_vector.add(term7);
-		terms_vector.add(term8);
-		terms_vector.add(term9);
-		terms_vector.add(term10);
-		geodesic_vector.add(lat);
-		geodesic_vector.add(lon);
+		terms_vector[0]=term1;
+		terms_vector[1]=term2;
+		terms_vector[3]=term3;
+		terms_vector[4]=term4;
+		terms_vector[5]=term5;
+		terms_vector[6]=term6;
+		terms_vector[7]=term7;
+		terms_vector[8]=term8;
+		terms_vector[9]=term9;
+		terms_vector[10]=term10;
+		geodesic_vector[0]=lat;
+		geodesic_vector[1]=lon;
 		this.cityName = "";
 		this.countryName = "";
 	}
@@ -109,16 +110,13 @@ public class City {
 	}
 
 	/* This method adds an integer to the vector terms_vector */
-	public void setTermVector(int term) {
-		if (terms_vector.size() >= 10) {
-			System.out.println("You can't add more nouns to the vector");
-			return;
-		}
-		terms_vector.add(term);
+	public void setTermVector(int pos,int term) throws OutOfBounds {
+		if(pos>10 || pos<0) throw new OutOfBounds(pos,"0 to 10");
+		terms_vector[pos]=term;
 	}
 
 	/* This method returns all the elements from the terms_vector */
-	public Vector<Integer> getTermsVector() {
+	public int[] getTermsVector() {
 		return terms_vector;
 	}
 
@@ -126,51 +124,28 @@ public class City {
 	 * This method returns a element from the terms_vector which is in position pos
 	 */
 	public int getTermsVector(int pos) {
-		return terms_vector.get(pos);
-	}
-
-	/* This method removes all the nouns from the terms_vector */
-	public void removeTermsVector() {
-		terms_vector.removeAllElements();
-	}
-
-	/* This method removes the element in the position pos */
-	public void removeTermVector(int pos) {
-		if (pos > 10 || pos < 0) {
-			System.out.println("Out of bounds, you can't delete the element");
-			return;
-		}
-		terms_vector.remove(pos);
+		return terms_vector[pos];
 	}
 
 	/* This method allows to add two double (lat,lon) in the gedesic_vector */
 	public void addGeodesicVector(Double lat, Double lon) {
-		if (geodesic_vector.isEmpty()) {
-			geodesic_vector.add(lat);
-			geodesic_vector.add(lon);
-			return;
-		}
-		System.out.println("The vector is already full");
+		geodesic_vector[0]=lat;
+		geodesic_vector[1]=lon;
 	}
 
 	/* This method returns the lat lon of the vector geodesic_vector */
-	public Vector<Double> getGeodesicVector() {
+	public Double[] getGeodesicVector() {
 		return geodesic_vector;
 	}
 
 	/* This method returns the Lat of the City */
 	public Double getGeodesicLat() {
-		return geodesic_vector.get(0);
+		return geodesic_vector[0];
 	}
 
 	/* This method return the Lon of the City */
 	public Double getGeodesicLon() {
-		return geodesic_vector.get(1);
-	}
-
-	/* This method removes all the double from the geodesic_vector */
-	public void removeGeodesicsVector() {
-		geodesic_vector.removeAllElements();
+		return geodesic_vector[1];
 	}
 
 	// This method retrieves the lat and lon of the city and adds them to the
@@ -195,7 +170,7 @@ public class City {
 
 	// This method adds to the terms_vector the number of times the word appeared
 	// from the article
-	public void retrieveTermVectors(String word) throws IOException, WikipediaNoArcticleException {
+	public void retrieveTermVectors(String word) throws IOException, WikipediaNoArcticleException, OutOfBounds {
 		ClientConfig config = new DefaultClientConfig();
 		Client client = Client.create(config);
 		WebResource service = client
@@ -206,7 +181,7 @@ public class City {
 		if (json.contains("pageid")) {
 			MediaWiki mediaWiki_obj = mapper.readValue(json, MediaWiki.class);
 			for (int i = 0; i < 10; i++) {
-				setTermVector(countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word));
+				setTermVector(i,countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word));
 			}
 		} else
 			throw new WikipediaNoArcticleException(getCityName());
@@ -214,7 +189,7 @@ public class City {
 
 	// This method fills all the 10 positions of the terms_vector with how many
 	// times every word from the String array appeared from the article.
-	public void retrieveTermVectors(String[] word) throws IOException, WikipediaNoArcticleException {
+	public void retrieveTermVectors(String[] word) throws IOException, WikipediaNoArcticleException, OutOfBounds {
 		ClientConfig config = new DefaultClientConfig();
 		Client client = Client.create(config);
 		WebResource service = client
@@ -225,7 +200,7 @@ public class City {
 		if (json.contains("pageid")) {
 			MediaWiki mediaWiki_obj = mapper.readValue(json, MediaWiki.class);
 			for (int i = 0; i < 10; i++) {
-				setTermVector(countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word[i]));
+				setTermVector(i,countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word[i]));
 			}
 		} else
 			throw new WikipediaNoArcticleException(getCityName());

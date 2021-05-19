@@ -2,6 +2,7 @@ package hua.dit.oopii.it21918;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
@@ -20,11 +21,11 @@ import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
 public abstract class Traveller implements  Comparable<Traveller> {
 
-	/* This vector contains the ratings of the user from 0-10 for the nouns */
-	private Vector<Integer> termsVector = new Vector<Integer>(10);
+	/* This array contains the ratings of the user from 0-10 for the nouns */
+	private int[] termsVector = new int[10];
 
-	/* This vector contains the latitude and longitude (lat, lon) of his/her City */
-	private Vector<Double> geodesicVector = new Vector<Double>(2);
+	/* This array contains the latitude and longitude (lat, lon) of his/her City */
+	private double[] geodesicVector = new double[2];
 
 	private String vatNumber;
 	private int age;
@@ -78,66 +79,42 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	}
 
 	/* This method adds an integer from 0 to 10 to the terms_vector */
-	public void addRatingOfterms(int term) throws OutOfBounds {
-		if (termsVector.size() >= 10) {
-			System.out.println("Out of bounds, you can't enter more than 10 ratings");
-			return;
+	public void addRatingOfterms(int pos,int term) throws OutOfBounds {
+		if(pos >=11 || pos<=-1) {
+			throw new OutOfBounds(pos,"0 to 10");
+		}else {
+			termsVector[pos]=term;	
 		}
-		if(term>10 || term<0) throw new OutOfBounds(term,"0 to 10");
-		termsVector.add(term);
-	}
-
-	/* This method removes a rating from the terms_vector in the position pos */
-	public void removeRatingOfterms(int pos) {
-		if (pos < 0 || pos > 10) {
-			System.out.println("Out of bounds, you can't remove that rating");
-			return;
-		}
-		termsVector.remove(pos);
-	}
-
-	/* This method removes all the ratings from the terms_vector */
-	public void removeRatingsOfTerms() {
-		termsVector.removeAllElements();
 	}
 
 	/* This method returns all the ratings from the terms_vector */
-	public Vector<Integer> getRatingsOfInterests() {
+	public int[] getRatingsOfInterests() {
 		return termsVector;
 	}
 
-	public Integer getRatingsOfInterests(int pos) {
-		return termsVector.get(pos);
+	public int getRatingsOfInterests(int pos) {
+		return termsVector[pos];
 	}
 
 	/* This method adds the lat and lon of the City the user is currently */
 	public void addLocation(Double lat, Double lon) {
-		if (geodesicVector.isEmpty()) {
-			geodesicVector.add(lat);
-			geodesicVector.add(lon);
-			return;
-		}
-		System.out.println("You have already entered your location.");
-	}
-
-	/* This method removes the lat lon from geodesic_vector */
-	public void removeLocation() {
-		geodesicVector.removeAllElements();
+		 geodesicVector[0]=lat;
+		 geodesicVector[1]=lon;
 	}
 
 	/* This method returns the lat lon from the geodesic_vector */
-	public Vector<Double> getLocation() {
+	public double[] getLocation() {
 		return geodesicVector;
 	}
 
 	/* This method returns the Lat of the City */
 	public Double getCoordinatesLat() {
-		return geodesicVector.get(0);
+		return geodesicVector[0];
 	}
 
 	/* This method return the Lon of the City */
 	public Double getCoordinatesLon() {
-		return geodesicVector.get(1);
+		return geodesicVector[1];
 	}
 
 	// The method retrieves the lat and lon of the user city.
@@ -260,7 +237,7 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	public int compareTo(Traveller traveller)
     {
 		if(vatNumber.equals(traveller.vatNumber)) {
-			if(this.termsVector.equals(traveller.termsVector))
+			if(Arrays.equals(this.termsVector, traveller.termsVector))
 			this.timestamp = 0;
 		}
         return  (int) (this.timestamp - traveller.timestamp);
