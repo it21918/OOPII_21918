@@ -41,7 +41,7 @@ public class Middle_traveller extends Traveller {
 	}
 
 	@Override
-	double calculateSimilarity(City obj) {
+	public double calculateSimilarity(City obj) {
 		double distance = distance(obj.getGeodesicLat(), obj.getGeodesicLon(), getCoordinatesLat(),
 				getCoordinatesLon());
 		return p * similarityTermsVector(obj) + (1 - p) * similarityGeodesicVector(distance);

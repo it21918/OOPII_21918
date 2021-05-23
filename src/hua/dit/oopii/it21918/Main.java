@@ -149,7 +149,7 @@ public class Main {
 
 		// we retrieve the lat lon of the user's city and give hard coding some info
 		// about him.
-		travellers.get(travellers.size() - 1).setVatNumber("AE000456789");
+		travellers.get(travellers.size() - 1).setVatNumber("AE000453333");
 		travellers.get(travellers.size() - 1).setCityName("tokyo");
 		travellers.get(travellers.size() - 1).setCountryName("jp");
 
@@ -333,7 +333,7 @@ public class Main {
 		json.writeJSON(travellers);
 
 		// We calculate which traveler will get the free ticket for he city in position
-		// calculateFreeTicket(travellers, mapOfCities.get("athens_gr"));
+		 calculateFreeTicket(travellers, mapOfCities.get("athens_gr"));
 
 	}
 

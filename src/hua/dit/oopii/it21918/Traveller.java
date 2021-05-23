@@ -142,7 +142,7 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	 */
 	abstract double similarityTermsVector(City obj);
 
-	abstract double calculateSimilarity(City obj);
+	public abstract double calculateSimilarity(City obj);
 
 	/*
 	 * It consulates the similarity_geodesic_vector between user city and the city
