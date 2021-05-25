@@ -662,7 +662,7 @@ public class Gui implements ActionListener {
 				maxPos = i;
 			}
 		}
-		System.out.print(travellers.get(maxPos).getVatNumber());
+		//System.out.print(travellers.get(maxPos).getVatNumber());
 		return travellers.get(maxPos).getVatNumber();
 	
 	}
