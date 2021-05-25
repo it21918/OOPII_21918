@@ -58,6 +58,7 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	}
 
 	public void setCityName(String cityName) {
+		if(cityName=="") throw new  NullPointerException();
 		this.cityName = cityName;
 	}
 
@@ -66,6 +67,7 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	}
 
 	public void setCountryName(String countryName) {
+		if(countryName=="") throw new  NullPointerException();
 		this.countryName = countryName;
 	}
 

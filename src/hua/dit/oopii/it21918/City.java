@@ -1,9 +1,10 @@
 package hua.dit.oopii.it21918;
 
 import java.io.IOException;
-import java.util.Vector;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,11 +13,11 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import gr.hua.dit.oopii.weather.OpenWeatherMap;
 import gr.hua.dit.oopii.wikipedia.MediaWiki;
 import hua.dit.oopii.exception.CountryException;
 import hua.dit.oopii.exception.OutOfBounds;
 import hua.dit.oopii.exception.WikipediaNoArcticleException;
-import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
 public class City {
 
@@ -97,7 +98,8 @@ public class City {
 		return countryName;
 	}
 
-	public void setCountryName(String countryName) {
+	public void setCountryName(String countryName) throws NullPointerException {		if(countryName=="") throw new  NullPointerException();
+	    if(countryName=="") throw new  NullPointerException();
 		this.countryName = countryName;
 	}
 
@@ -106,6 +108,7 @@ public class City {
 	}
 
 	public void setCityName(String cityName) {
+		if(cityName=="") throw new NullPointerException();
 		this.cityName = cityName;
 	}
 

@@ -46,7 +46,7 @@ import hua.dit.oopii.it21918.Middle_traveller;
 import hua.dit.oopii.it21918.Traveller;
 import hua.dit.oopii.it21918.Young_traveller;
 
-public class Gui  implements ActionListener {
+public class Gui implements ActionListener {
 
 	private JButton submit;
 	private JTextField vatNumber;
@@ -66,7 +66,6 @@ public class Gui  implements ActionListener {
 	private JTextField visitCity;
 	private JTextField visitCountry;
 	private JTextField show;
-
 
 	public Gui() {
 
@@ -251,41 +250,40 @@ public class Gui  implements ActionListener {
 		inputs[12] = "Club :";
 		inputs[13] = "Sidewalks :";
 		inputs[14] = "Bar :";
-		
+
 		submit = new JButton("Submit");
 		submit.setBounds(10, 500, 165, 25);
 		submit.addActionListener(this);
 		frame.add(submit);
-		
-		 label = new JLabel("Visit ");
-		 label.setForeground(Color.blue);
-		 label.setBounds(500, 180, 500, 25);
-		 frame.add(label);
-		 
-		 label = new JLabel("City :");
-		 label.setBounds(400, 210, 500, 25);
-		 frame.add(label);
-		 
-		 visitCity = new JTextField("athens,tokyo");
-		 visitCity.setBounds(500, 210, 500, 25);
-		 frame.add(visitCity);
-		 
-		 label = new JLabel("Country's initials :");
-		 label.setBounds(390, 240, 500, 25);
-		 frame.add(label);
-		 
-		 visitCountry = new JTextField("gr,jp", 20);
-		 visitCountry.setBounds(500, 240, 500, 25);
-		 frame.add(visitCountry);
-		 
-		 label = new JLabel("Show :");
-		 label.setBounds(390, 270, 500, 25);
-		 frame.add(label);
-		 
-		 show = new JTextField("2");
-		 show.setBounds(500, 270, 500, 25);
-		 frame.add(show);
 
+		label = new JLabel("Visit ");
+		label.setForeground(Color.blue);
+		label.setBounds(500, 180, 500, 25);
+		frame.add(label);
+
+		label = new JLabel("City :");
+		label.setBounds(400, 210, 500, 25);
+		frame.add(label);
+
+		visitCity = new JTextField("athens,tokyo");
+		visitCity.setBounds(500, 210, 500, 25);
+		frame.add(visitCity);
+
+		label = new JLabel("Country's initials :");
+		label.setBounds(390, 240, 500, 25);
+		frame.add(label);
+
+		visitCountry = new JTextField("gr,jp", 20);
+		visitCountry.setBounds(500, 240, 500, 25);
+		frame.add(visitCountry);
+
+		label = new JLabel("Show :");
+		label.setBounds(390, 270, 500, 25);
+		frame.add(label);
+
+		show = new JTextField("2");
+		show.setBounds(500, 270, 500, 25);
+		frame.add(show);
 
 		int step = 0;
 		for (int i = 0; i < inputs.length; i++) {
@@ -301,92 +299,104 @@ public class Gui  implements ActionListener {
 			label.setBounds(10, step, 120, 25);
 			frame.add(label);
 		}
-		
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
 	public String getVatNumber() {
 		return vatNumber.getText();
 	}
-	
+
 	public int getAge() {
 		return Integer.parseInt(age.getText());
 	}
-	
+
 	public String getCityName() {
 		return cityName.getText();
 	}
-	
+
 	public String getcountryInitials() {
 		return countryInitials.getText();
 	}
-	
+
 	public int getTerm1() {
 		return term1.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm2() {
 		return term2.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm3() {
 		return term3.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm4() {
 		return term4.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm5() {
 		return term5.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm6() {
 		return term6.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm7() {
 		return term7.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm8() {
 		return term8.getSelectedIndex();
-		
+
 	}
+
 	public int getTerm9() {
 		return term9.getSelectedIndex();
-		
-	}	
+
+	}
+
 	public int getTerm10() {
 		return term10.getSelectedIndex();
 	}
+
 	public String getVisitCity() {
 		return visitCity.getText();
-		
+
 	}
+
 	public String getVisitCountry() {
 		return visitCountry.getText();
 	}
+
 	public int show() {
 		return Integer.parseInt(show.getText());
 	}
-	
+
 	public static void main(String[] args) {
-         new Gui();
+		new Gui();
 	}
-	
 
 	@Override
-	public void actionPerformed(ActionEvent e) {				
+	public void actionPerformed(ActionEvent e) {
+		int error = 0;
 		show.setForeground(Color.black);
 		age.setForeground(Color.black);
 		cityName.setForeground(Color.black);
 		countryInitials.setForeground(Color.black);
 		visitCity.setForeground(Color.black);
 		visitCountry.setForeground(Color.black);
-		
+
 		OracleDBServiceCRUD dataBase = new OracleDBServiceCRUD();
 		HashMap<String, City> mapOfCities = new HashMap<String, City>();
 		try {
@@ -405,69 +415,82 @@ public class Gui  implements ActionListener {
 		try {
 			travellers = json.readJSON();
 		} catch (JsonParseException ex) {
+			error++;
 			ex.printStackTrace();
 		} catch (JsonMappingException ex) {
+			error++;
 			ex.printStackTrace();
 		} catch (IOException ex) {
+			error++;
 			ex.printStackTrace();
 		}
 
-			try {
-				int age = getAge();
+		try {
+			int age = getAge();
 
-				if (age >= 16 && age <= 25) {
-					Young_traveller young_traveller = new Young_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(), getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
-					travellers.add(young_traveller);
+			if (age >= 16 && age <= 25) {
+				Young_traveller young_traveller = new Young_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(),
+						getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
+				travellers.add(young_traveller);
 
-				} else if (age <= 60) {
-					Middle_traveller middle_traveller = new Middle_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(), getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
-					travellers.add(middle_traveller);
+			} else if (age <= 60) {
+				Middle_traveller middle_traveller = new Middle_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(),
+						getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
+				travellers.add(middle_traveller);
 
-				} else {
-					Elder_traveller elder_traveller = new Elder_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(), getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
-					travellers.add(elder_traveller);
+			} else {
+				Elder_traveller elder_traveller = new Elder_traveller(getTerm1(), getTerm2(), getTerm3(), getTerm4(),
+						getTerm5(), getTerm6(), getTerm7(), getTerm8(), getTerm9(), getTerm10());
+				travellers.add(elder_traveller);
 
-				}
-				travellers.get(travellers.size() - 1).setAge(age);
-			} catch (InputMismatchException ex) {
-				System.out.println("Your age should be an integer. Try again.");
-				age.setForeground(Color.red);
-			} catch (OutOfBounds ex) {
-				System.out.println("Try to enter your age again.");
-				age.setForeground(Color.red);
-			} catch (Exception ex) {
-				System.out.println("Something went wrong. Exiting from program.");
-				age.setForeground(Color.red);
 			}
-		
+			travellers.get(travellers.size() - 1).setAge(age);
+		} catch (InputMismatchException ex) {
+			System.out.println("Your age should be an integer. Try again.");
+			age.setForeground(Color.red);
+			error++;
+		} catch (OutOfBounds ex) {
+			System.out.println("Try to enter your age again.");
+			age.setForeground(Color.red);
+			error++;
+		} catch (Exception ex) {
+			System.out.println("Something went wrong. Exiting from program.");
+			age.setForeground(Color.red);
+			error++;
+		}
+
 		travellers.get(travellers.size() - 1).setVatNumber(getVatNumber());
 		travellers.get(travellers.size() - 1).setCityName(getCityName());
 		travellers.get(travellers.size() - 1).setCountryName(getcountryInitials());
 
-			try {
+		try {
 
-				travellers.get(travellers.size() - 1).retrieveLatLon();
-			} catch (CountryException c) {
-				System.out.println("Type the correct country's initials ");
-				countryInitials.setForeground(Color.red);
-			} catch (UniformInterfaceException u) {
-				if (u.getMessage().contains("404")) {
-					System.out.println("Type a correct city name for the country's initials: "
-							+ travellers.get(travellers.size() - 1).getCountryName());
-					cityName.setForeground(Color.red);
-				} else {
-					cityName.setForeground(Color.red);
-					System.out.println("Something went wrong. Exiting from program");
-					return;
-				}
-			} catch (JsonParseException e1) {
-				e1.printStackTrace();
-			} catch (JsonMappingException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			travellers.get(travellers.size() - 1).retrieveLatLon();
+		} catch (CountryException c) {
+			System.out.println("Type the correct country's initials ");
+			countryInitials.setForeground(Color.red);
+			error++;
+		} catch (UniformInterfaceException u) {
+			if (u.getMessage().contains("404")) {
+				System.out.println("Type a correct city name for the country's initials: "
+						+ travellers.get(travellers.size() - 1).getCountryName());
+				cityName.setForeground(Color.red);
+				error++;
+			} else {
+				cityName.setForeground(Color.red);
+				System.out.println("Something went wrong. Exiting from program");
+				error++;
 			}
-		
+		} catch (JsonParseException e1) {
+			e1.printStackTrace();
+			error++;
+		} catch (JsonMappingException e1) {
+			e1.printStackTrace();
+			error++;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			error++;
+		}
 
 		ArrayList<City> choosenCities = new ArrayList<City>();
 		ArrayList<String> searchCities = new ArrayList<String>();
@@ -475,25 +498,24 @@ public class Gui  implements ActionListener {
 
 		// The user add to the array searchCities the cityName_countryName of the cities
 		// the wants to compare.
-		
+
 		String visitCities = getVisitCity();
-        String[] vCity = visitCities.split(",");
-		
-        String visitCountries = getVisitCountry();
-        String[] vCountry = visitCountries.split(",");
-        
-		
-        if(vCity.length != vCountry.length) {
-        	visitCity.setForeground(Color.red);
+		String[] vCity = visitCities.split(",");
+
+		String visitCountries = getVisitCountry();
+		String[] vCountry = visitCountries.split(",");
+
+		if (vCity.length != vCountry.length) {
+			visitCity.setForeground(Color.red);
 			visitCountry.setForeground(Color.red);
-        	return;
-        } else {
-        	
-        	for(int i=0 ; i<vCity.length ; i++) {
-        		searchCities.add(vCity[i]+"_"+vCountry[i]);
-        	}
-                
-        }
+			return;
+		} else {
+
+			for (int i = 0; i < vCity.length; i++) {
+				searchCities.add(vCity[i] + "_" + vCountry[i]);
+			}
+
+		}
 
 		for (int i = 0; i < searchCities.size(); i++) {
 			if (!searchCity(searchCities.get(i), mapOfCities)) {
@@ -502,46 +524,51 @@ public class Gui  implements ActionListener {
 				City objCity = new City(searchCities.get(i).split("_")[0], searchCities.get(i).split("_")[1]);
 				mapOfCities.put(searchCities.get(i), objCity);
 
-					try {
-					
+				try {
 
-						mapOfCities.get(searchCities.get(i)).retrieveLatLon();
-					} catch (CountryException v) {
-						visitCountry.setForeground(Color.red);
-						System.out.println("Type the correct country's initial for the city "
-								+ mapOfCities.get(searchCities.get(i)).getCityName() + ":");
-					} catch (UniformInterfaceException u) {
-						if (u.getMessage().contains("404")) {
-							visitCity.setForeground(Color.red);
-							System.out.println("The name of the city "
-									+ mapOfCities.get(searchCities.get(i)).getCityName() + " is wrong.");
-							System.out.println("Type a correct city name for the country's initial "
-									+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
-						} else {
-							System.out.println("Something went wrong. Exiting from program");
-						}
-					} catch (JsonParseException e1) {
-						e1.printStackTrace();
-					} catch (JsonMappingException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					mapOfCities.get(searchCities.get(i)).retrieveLatLon();
+				} catch (CountryException v) {
+					visitCountry.setForeground(Color.red);
+					System.out.println("Type the correct country's initial for the city "
+							+ mapOfCities.get(searchCities.get(i)).getCityName() + ":");
+					error++;
+				} catch (UniformInterfaceException u) {
+					if (u.getMessage().contains("404")) {
+						visitCity.setForeground(Color.red);
+						System.out.println("The name of the city " + mapOfCities.get(searchCities.get(i)).getCityName()
+								+ " is wrong.");
+						System.out.println("Type a correct city name for the country's initial "
+								+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
+						error++;
+					} else {
+						error++;
+						System.out.println("Something went wrong. Exiting from program");
 					}
-				
+				} catch (JsonParseException e1) {
+					e1.printStackTrace();
+					error++;
+				} catch (JsonMappingException e1) {
+					e1.printStackTrace();
+					error++;
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					error++;
+				}
+
 				String[] terms = { "arts", "sea", "museums", "restaurant", "stadium", "beach", "hotel", "club",
 						"sidewalks", "bar" };
 
-					try {
-						mapOfCities.get(searchCities.get(i)).retrieveTermVectors(terms);
-					} catch (WikipediaNoArcticleException ex) {
-						System.out.println(ex.getMessage());
-						System.out.print("Type a correct city name for the country "
-								+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
-					} catch (Exception ex) {
-						System.out.println("Something went wrong. Exiting from program.");
-					}
-
-				
+				try {
+					mapOfCities.get(searchCities.get(i)).retrieveTermVectors(terms);
+				} catch (WikipediaNoArcticleException ex) {
+					System.out.println(ex.getMessage());
+					System.out.print("Type a correct city name for the country "
+							+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
+					error++;
+				} catch (Exception ex) {
+					System.out.println("Something went wrong. Exiting from program.");
+					error++;
+				}
 
 				// if the city doesn't already exist we add it to the data base.
 				if (!searchCity(searchCities.get(i), mapOfCities)) {
@@ -557,50 +584,55 @@ public class Gui  implements ActionListener {
 							mapOfCities.get(searchCities.get(i)).getTermsVector(7),
 							mapOfCities.get(searchCities.get(i)).getTermsVector(8),
 							mapOfCities.get(searchCities.get(i)).getTermsVector(9));
-				} 
+				}
 
 			}
 			// we renew the timeStamp every time e search a new city for the traveler.
 			travellers.get(travellers.size() - 1).setTimestamp(date.getTime());
 			// we add the object city to the array list.
 			choosenCities.add(mapOfCities.get(searchCities.get(i)));
-
 		}
-		
-		final DefaultListModel<String> model = new DefaultListModel<String>();
 
-			try {
-				if (show() == 1) {
-					model.addElement(travellers.get(travellers.size() - 1).compareCities(choosenCities).getCityName()) ;  
-				} else {
-										
-					ArrayList<City> cities = travellers.get(travellers.size() - 1).compareCities(choosenCities, show());
-					for (int i = 0; i < cities.size(); i++) {
-						model.addElement(cities.get(i).getCityName()) ;
-					}
-									}
-			} catch (InputMismatchException ex) {
-				show.setForeground(Color.red);
-				System.out.println("You can't give a character for input. Try again.");
-				
-			} catch (OutOfBounds ex) {
-				show.setForeground(Color.red);
-				System.out.println(ex.getMessage());
-				
-			} catch (ArrayIndexOutOfBoundsException ex) {
-				show.setForeground(Color.red);
-				System.out.println("You can enter an integer between 1 to " + searchCities.size());
-				
+	   DefaultListModel<String> model = new DefaultListModel<String>();
+		try {
+			if (show() == 1) {
+				model.addElement(travellers.get(travellers.size() - 1).compareCities(choosenCities).getCityName()+"_"+travellers.get(travellers.size() - 1).compareCities(choosenCities).getCountryName());
+			} else {
+
+				ArrayList<City> cities = travellers.get(travellers.size() - 1).compareCities(choosenCities, show());
+				for (int i = 0; i < cities.size(); i++) {
+					model.addElement(cities.get(i).getCityName()+"_"+cities.get(i).getCountryName());
+				}
 			}
-			final JList list = new JList(model);
+		} catch (InputMismatchException ex) {
+			show.setForeground(Color.red);
+			System.out.println("You can't give a character for input. Try again.");
+			error++;
+		} catch (OutOfBounds ex) {
+			show.setForeground(Color.red);
+			System.out.println(ex.getMessage());
+			error++;
 
-			JOptionPane.showMessageDialog(
-			  null, list, "Choose the city you want to visit :", JOptionPane.PLAIN_MESSAGE);
-			System.out.println(Arrays.toString(list.getSelectedIndices()));
-			travellers.get(travellers.size() - 1).setVisit(list.getSelectedValue().toString());
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			show.setForeground(Color.red);
+			System.out.println("You can enter an integer between 1 to " + searchCities.size());
+			error++;
+		}
 
+		if(error>0 ) return;
 		
-		// we remove the travellers with the same terms and VAT number and sort the travellers.
+
+		JList<String> list = new JList<String>(model);
+
+		JOptionPane.showMessageDialog(null, list, "Choose the city you want to visit :", JOptionPane.PLAIN_MESSAGE);
+
+		travellers.get(travellers.size() - 1).setVisit(list.getSelectedValue().toString());
+		
+		if(calculateFreeTicket(travellers,mapOfCities.get(list.getSelectedValue().toString())).equals(travellers.get(travellers.size()-1).getVatNumber()))
+			JOptionPane.showMessageDialog(null, "You get the free ticket for the city:"+list.getSelectedValue().toString(), "CONGRATS!", JOptionPane.PLAIN_MESSAGE);
+
+		// we remove the travellers with the same terms and VAT number and sort the
+		// travellers.
 		Collections.sort(travellers);
 
 		Iterator<Traveller> itr = travellers.iterator();
@@ -610,7 +642,7 @@ public class Gui  implements ActionListener {
 				itr.remove();
 			}
 		}
-		
+
 		seeTravellersNoDuplicates(travellers);
 
 		// we write the travelers to the JSON file.
@@ -619,13 +651,9 @@ public class Gui  implements ActionListener {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-
-		// We calculate which traveler will get the free ticket for he city in position
-		 calculateFreeTicket(travellers, mapOfCities.get("athens_gr"));
-
 	}
-	
-	public static void calculateFreeTicket(ArrayList<Traveller> travellers, City obj) {
+
+	public static String calculateFreeTicket(ArrayList<Traveller> travellers, City obj) {
 		double max = travellers.get(0).calculateSimilarity(obj);
 		int maxPos = 0;
 		for (int i = 1; i < travellers.size(); i++) {
@@ -634,8 +662,9 @@ public class Gui  implements ActionListener {
 				maxPos = i;
 			}
 		}
-		System.out.println("The traveller with the VAT number: " + travellers.get(maxPos).getVatNumber()
-				+ " gets the free ticket.");
+		System.out.print(travellers.get(maxPos).getVatNumber());
+		return travellers.get(maxPos).getVatNumber();
+	
 	}
 
 	public static boolean searchCity(String searchCities, HashMap<String, City> mapOfCities) {
@@ -646,20 +675,18 @@ public class Gui  implements ActionListener {
 		}
 		return false;
 	}
-	
+
 	public static void seeTravellersNoDuplicates(ArrayList<Traveller> travellers) {
-				
-				ArrayList<String> newTravellersNoDuplicates = new ArrayList<String>();
-				for(int i=0 ; i<travellers.size() ; i++) {
-					newTravellersNoDuplicates.add(travellers.get(i).getVatNumber());
-				}
-				
-				Set<String> noDuplicatesSet = new LinkedHashSet<>(newTravellersNoDuplicates);
-				
-				System.out.println(noDuplicatesSet);
-		
-	}
-		
+
+		ArrayList<String> newTravellersNoDuplicates = new ArrayList<String>();
+		for (int i = 0; i < travellers.size(); i++) {
+			newTravellersNoDuplicates.add(travellers.get(i).getVatNumber());
+		}
+
+		Set<String> noDuplicatesSet = new LinkedHashSet<>(newTravellersNoDuplicates);
+
+		System.out.println(noDuplicatesSet);
+
 	}
 
-
+}
