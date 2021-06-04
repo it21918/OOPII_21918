@@ -8,15 +8,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import gr.hua.dit.oopii.db.OracleDBServiceCRUD;
@@ -47,9 +57,10 @@ import hua.dit.oopii.it21918.Elder_traveller;
 import hua.dit.oopii.it21918.Middle_traveller;
 import hua.dit.oopii.it21918.Traveller;
 import hua.dit.oopii.it21918.Young_traveller;
+import hua.dit.oopii.streams.RecommendedCity;
 
-public class Gui implements ActionListener {
-
+public class Gui implements ActionListener, Runnable {
+	private Thread t;
 	private JButton submit;
 	private JButton show_travellers;
 	private JTextField vatNumber;
@@ -69,6 +80,12 @@ public class Gui implements ActionListener {
 	private JTextField visitCity;
 	private JTextField visitCountry;
 	private JTextField show;
+	private JButton filtering;
+
+	private ArrayList<Traveller> travellers;
+	private HashMap<String, City> mapOfCities;
+	private ArrayList<City> choosenCities;
+	private ArrayList<String> searchCities;
 
 	public Gui() {
 
@@ -264,6 +281,11 @@ public class Gui implements ActionListener {
 		show_travellers.addActionListener(this);
 		frame.add(show_travellers);
 
+		filtering = new JButton("filtering");
+		filtering.setBounds(10, 560, 165, 25);
+		filtering.addActionListener(this);
+		frame.add(filtering);
+
 		label = new JLabel("Visit ");
 		label.setForeground(Color.blue);
 		label.setBounds(500, 180, 500, 25);
@@ -391,20 +413,22 @@ public class Gui implements ActionListener {
 		return Integer.parseInt(show.getText());
 	}
 
+	private int error;
+
 	public static void main(String[] args) {
 		new Gui();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		int error = 0;
-
+		error = 0;
 		Json json = new Json();
-		ArrayList<Traveller> travellers = new ArrayList<Traveller>();
 
-		// adds travelers from JSON file.
+		travellers = new ArrayList<Traveller>();
+
 		try {
 			travellers = json.readJSON();
+
 		} catch (JsonParseException ex) {
 			error++;
 			ex.printStackTrace();
@@ -416,6 +440,18 @@ public class Gui implements ActionListener {
 			ex.printStackTrace();
 		}
 
+		OracleDBServiceCRUD dataBase;
+		dataBase = new OracleDBServiceCRUD();
+		mapOfCities = new HashMap<String, City>();
+
+		try {
+			dataBase.ReadData(mapOfCities);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} catch (OutOfBounds e1) {
+			e1.printStackTrace();
+		}
+
 		if (e.getActionCommand().equals("Submit")) {
 			show.setForeground(Color.black);
 			age.setForeground(Color.black);
@@ -423,16 +459,6 @@ public class Gui implements ActionListener {
 			countryInitials.setForeground(Color.black);
 			visitCity.setForeground(Color.black);
 			visitCountry.setForeground(Color.black);
-
-			OracleDBServiceCRUD dataBase = new OracleDBServiceCRUD();
-			HashMap<String, City> mapOfCities = new HashMap<String, City>();
-			try {
-				dataBase.ReadData(mapOfCities);
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			} catch (OutOfBounds e1) {
-				e1.printStackTrace();
-			}
 
 			try {
 				int age = getAge();
@@ -473,7 +499,6 @@ public class Gui implements ActionListener {
 			travellers.get(travellers.size() - 1).setCountryName(getcountryInitials());
 
 			try {
-
 				travellers.get(travellers.size() - 1).retrieveLatLon();
 			} catch (CountryException c) {
 				System.out.println("Type the correct country's initials ");
@@ -501,8 +526,8 @@ public class Gui implements ActionListener {
 				error++;
 			}
 
-			ArrayList<City> choosenCities = new ArrayList<City>();
-			ArrayList<String> searchCities = new ArrayList<String>();
+			choosenCities = new ArrayList<City>();
+			searchCities = new ArrayList<String>();
 			Date date = new Date();
 
 			// The user add to the array searchCities the cityName_countryName of the cities
@@ -525,6 +550,9 @@ public class Gui implements ActionListener {
 				}
 
 			}
+
+			t = new Thread(this, "Admin Thread");
+			t.start();
 
 			for (int i = 0; i < searchCities.size(); i++) {
 				if (!searchCity(searchCities.get(i), mapOfCities)) {
@@ -551,6 +579,8 @@ public class Gui implements ActionListener {
 							error++;
 						} else {
 							error++;
+							visitCountry.setForeground(Color.red);
+							visitCity.setForeground(Color.red);
 							System.out.println("Something went wrong. Exiting from program");
 						}
 					} catch (JsonParseException e1) {
@@ -564,36 +594,19 @@ public class Gui implements ActionListener {
 						error++;
 					}
 
-					String[] terms = { "arts", "sea", "museums", "restaurant", "stadium", "beach", "hotel", "club",
-							"sidewalks", "bar" };
-
-					try {
-						mapOfCities.get(searchCities.get(i)).retrieveTermVectors(terms);
-					} catch (WikipediaNoArcticleException ex) {
-						System.out.println(ex.getMessage());
-						System.out.print("Type a correct city name for the country "
-								+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
-						error++;
-					} catch (Exception ex) {
-						System.out.println("Something went wrong. Exiting from program.");
-						error++;
-					}
-
 					// if the city doesn't already exist we add it to the data base.
-					if (!searchCity(searchCities.get(i), mapOfCities)) {
-						dataBase.addDataToDB(searchCities.get(i), mapOfCities.get(searchCities.get(i)).getGeodesicLat(),
-								mapOfCities.get(searchCities.get(i)).getGeodesicLon(),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(0),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(1),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(2),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(3),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(4),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(5),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(6),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(7),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(8),
-								mapOfCities.get(searchCities.get(i)).getTermsVector(9));
-					}
+					dataBase.addDataToDB(searchCities.get(i), mapOfCities.get(searchCities.get(i)).getGeodesicLat(),
+							mapOfCities.get(searchCities.get(i)).getGeodesicLon(),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(0),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(1),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(2),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(3),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(4),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(5),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(6),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(7),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(8),
+							mapOfCities.get(searchCities.get(i)).getTermsVector(9));
 
 				}
 				// we renew the timeStamp every time e search a new city for the traveler.
@@ -669,9 +682,46 @@ public class Gui implements ActionListener {
 			}
 
 		}
+
 		if (e.getActionCommand().equals("show_travellers")) {
 			JOptionPane.showMessageDialog(null, seeTravellersNoDuplicates(travellers));
 		}
+		if (e.getActionCommand().equals("filtering")) {
+			Traveller candidateTraveller = travellers.get(travellers.size() - 1);
+			int[] candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
+
+			ArrayList<Traveller> newT = new ArrayList<Traveller>();
+			newT = travellers;
+
+			for (int i = 0; i < newT.size(); i++) {
+				for (int y = newT.size() - 1; y > i; y--) {
+					System.out.println(y);
+					if (newT.get(i).getVisit().equals(newT.get(y).getVisit())) {
+						newT.remove(y);
+					}
+				}
+			}
+
+			Map<String, Integer> cityToRank = newT.stream().collect(Collectors.toMap(i -> i.getVisit(),
+					i -> innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)));
+
+			cityToRank.forEach((k, v) -> System.out.println("city:" + k + " rank: " + v));
+
+			Optional<RecommendedCity> recommendedCity = travellers.stream()
+					.map(i -> new RecommendedCity(i.getVisit(),
+							innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)))
+					.max(Comparator.comparingInt(RecommendedCity::getRank));
+
+			System.out.println("The Recommended City:" + recommendedCity.get().getCity());
+		}
+
+	}
+
+	private static int innerDot(int[] currentTraveller, int[] candidateTraveller) {
+		int sum = 0;
+		for (int i = 0; i < 10; i++)
+			sum += currentTraveller[i] * candidateTraveller[i];
+		return sum;
 
 	}
 
@@ -708,6 +758,32 @@ public class Gui implements ActionListener {
 		Set<String> noDuplicatesSet = new LinkedHashSet<>(newTravellersNoDuplicates);
 
 		return (noDuplicatesSet);
+
+	}
+
+	@Override
+	public void run() {
+		String[] terms = { "arts", "sea", "museums", "restaurant", "stadium", "beach", "hotel", "club", "sidewalks",
+				"bar" };
+
+		for (int i = 0; i < searchCities.size(); i++) {
+			if (!searchCity(searchCities.get(i), mapOfCities)) {
+				try {
+					mapOfCities.get(searchCities.get(i)).retrieveTermVectors(terms);
+				} catch (WikipediaNoArcticleException ex) {
+					System.out.println(ex.getMessage());
+					System.out.print("Type a correct city name for the country "
+							+ mapOfCities.get(searchCities.get(i)).getCountryName() + ":");
+					cityName.setForeground(Color.red);
+					error++;
+				} catch (Exception ex) {
+					System.out.println("Something went wrong. Exiting from program.");
+					error++;
+				}
+
+			}
+
+		}
 
 	}
 

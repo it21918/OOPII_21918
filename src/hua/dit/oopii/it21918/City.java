@@ -170,6 +170,27 @@ public class City {
 			throw new CountryException(getCountryName());
 		}
 	}
+	
+	
+	// This method fills all the 10 positions of the terms_vector with how many
+	// times every word from the String array appeared from the article.
+	public void retrieveTermVectors(String[] word) throws IOException, WikipediaNoArcticleException, OutOfBounds {
+		ClientConfig config = new DefaultClientConfig();
+		Client client = Client.create(config);
+		WebResource service = client
+				.resource(UriBuilder.fromUri("https://en.wikipedia.org/w/api.php?action=query&prop=extracts&titles="
+						+ getCityName() + "&format=json&formatversion=2").build());
+		ObjectMapper mapper = new ObjectMapper();
+		String json = service.accept(MediaType.APPLICATION_JSON).get(String.class);
+		if (json.contains("pageid")) {
+			MediaWiki mediaWiki_obj = mapper.readValue(json, MediaWiki.class);
+			for (int i = 0; i < 10; i++) {
+				setTermVector(i,countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word[i]));
+			}
+		} else
+			throw new WikipediaNoArcticleException(getCityName());
+	}
+	
 
 	// This method adds to the terms_vector the number of times the word appeared
 	// from the article
@@ -190,24 +211,6 @@ public class City {
 			throw new WikipediaNoArcticleException(getCityName());
 	}
 
-	// This method fills all the 10 positions of the terms_vector with how many
-	// times every word from the String array appeared from the article.
-	public void retrieveTermVectors(String[] word) throws IOException, WikipediaNoArcticleException, OutOfBounds {
-		ClientConfig config = new DefaultClientConfig();
-		Client client = Client.create(config);
-		WebResource service = client
-				.resource(UriBuilder.fromUri("https://en.wikipedia.org/w/api.php?action=query&prop=extracts&titles="
-						+ getCityName() + "&format=json&formatversion=2").build());
-		ObjectMapper mapper = new ObjectMapper();
-		String json = service.accept(MediaType.APPLICATION_JSON).get(String.class);
-		if (json.contains("pageid")) {
-			MediaWiki mediaWiki_obj = mapper.readValue(json, MediaWiki.class);
-			for (int i = 0; i < 10; i++) {
-				setTermVector(i,countCriterionfCity(mediaWiki_obj.getQuery().getPages().get(0).getExtract(), word[i]));
-			}
-		} else
-			throw new WikipediaNoArcticleException(getCityName());
-	}
 
 	/* It counts how many times the string criterion is in the string cityArticle */
 	public int countCriterionfCity(String cityArticle, String criterion) {
@@ -221,5 +224,8 @@ public class City {
 		}
 		return count;
 	}
+
+
+
 
 }

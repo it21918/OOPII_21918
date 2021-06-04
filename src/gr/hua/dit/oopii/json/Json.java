@@ -27,7 +27,7 @@ public class Json {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.enableDefaultTyping();
-		AllTravellers data = mapper.readValue(new File("arraylist.json"), AllTravellers.class);
+		AllTravellers data = mapper.readValue(new File("arraylist.json"), AllTravellers.class);		
 		return data.getCollectionAllTravellers();
 	}
 }

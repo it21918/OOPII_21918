@@ -26,7 +26,6 @@ public abstract class Traveller implements  Comparable<Traveller> {
 
 	/* This array contains the latitude and longitude (lat, lon) of his/her City */
 	private double[] geodesicVector = new double[2];
-
 	private String vatNumber;
 	private int age;
 	private String cityName;
@@ -35,11 +34,8 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	private String visit;
 	private static final String appid = "6adefb3191788a7b0ffefbff19ba0448";
 
+
 	public Traveller() {
-		vatNumber = "";
-		age = 0;
-		cityName = "";
-		countryName = "";
 	}
 
 	public int getAge() {
@@ -85,14 +81,15 @@ public abstract class Traveller implements  Comparable<Traveller> {
 		if(pos >=11 || pos<=-1) {
 			throw new OutOfBounds(pos,"0 to 10");
 		}else {
-			termsVector[pos]=term;	
+			this.termsVector[pos]=term;	
 		}
 	}
+
 
 	/* This method returns all the ratings from the terms_vector */
 	public int[] getRatingsOfInterests() {
 		return termsVector;
-	}
+	} 
 
 	public int getRatingsOfInterests(int pos) {
 		return termsVector[pos];
@@ -100,8 +97,8 @@ public abstract class Traveller implements  Comparable<Traveller> {
 
 	/* This method adds the lat and lon of the City the user is currently */
 	public void addLocation(Double lat, Double lon) {
-		 geodesicVector[0]=lat;
-		 geodesicVector[1]=lon;
+		 this.geodesicVector[0]=lat;
+		 this.geodesicVector[1]=lon;
 	}
 
 	/* This method returns the lat lon from the geodesic_vector */
@@ -244,6 +241,10 @@ public abstract class Traveller implements  Comparable<Traveller> {
 		}
         return  (int) (this.timestamp - traveller.timestamp);
     }
+
+	
+
+
 }
 
 

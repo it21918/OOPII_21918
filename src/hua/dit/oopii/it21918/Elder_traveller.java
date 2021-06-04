@@ -10,7 +10,6 @@ public class Elder_traveller extends Traveller {
 
 	public Elder_traveller(int term1, int term2, int term3, int term4, int term5, int term6, int term7, int term8,
 			int term9, int term10) throws OutOfBounds {
-		
 		addRatingOfterms(0,term1);
 		addRatingOfterms(1,term2);
 		addRatingOfterms(2,term3);
