@@ -1,3 +1,4 @@
+
 package hua.dit.oopii.gui;
 
 import java.awt.Choice;
@@ -90,7 +91,6 @@ public class Gui implements ActionListener, Runnable {
 	public Gui() {
 
 		JFrame frame = new JFrame("Travelling agency");
-		JPanel panel = new JPanel();
 
 		JLabel label = new JLabel("Put your personal info.");
 		label.setForeground(Color.blue);
@@ -99,19 +99,19 @@ public class Gui implements ActionListener, Runnable {
 
 		String[] inputs = new String[16];
 
-		vatNumber = new JTextField(20);
+		vatNumber = new JTextField("20");
 		vatNumber.setBounds(140, 30, 165, 25);
 		frame.add(vatNumber);
 
-		age = new JTextField(20);
+		age = new JTextField("20");
 		age.setBounds(140, 60, 165, 25);
 		frame.add(age);
 
-		cityName = new JTextField(20);
+		cityName = new JTextField("athens");
 		cityName.setBounds(140, 90, 165, 25);
 		frame.add(cityName);
 
-		countryInitials = new JTextField(20);
+		countryInitials = new JTextField("gr");
 		countryInitials.setBounds(140, 120, 165, 25);
 		frame.add(countryInitials);
 
@@ -425,34 +425,31 @@ public class Gui implements ActionListener, Runnable {
 		Json json = new Json();
 
 		travellers = new ArrayList<Traveller>();
-
 		try {
 			travellers = json.readJSON();
-
 		} catch (JsonParseException ex) {
-			error++;
 			ex.printStackTrace();
 		} catch (JsonMappingException ex) {
-			error++;
 			ex.printStackTrace();
 		} catch (IOException ex) {
-			error++;
 			ex.printStackTrace();
 		}
 
-		OracleDBServiceCRUD dataBase;
-		dataBase = new OracleDBServiceCRUD();
-		mapOfCities = new HashMap<String, City>();
+		
+		if (e.getActionCommand().equals("Submit") || e.getActionCommand().equals("filtering")) {
 
-		try {
-			dataBase.ReadData(mapOfCities);
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		} catch (OutOfBounds e1) {
-			e1.printStackTrace();
-		}
+			OracleDBServiceCRUD dataBase;
+			dataBase = new OracleDBServiceCRUD();
+			mapOfCities = new HashMap<String, City>();
 
-		if (e.getActionCommand().equals("Submit")) {
+			try {
+				dataBase.ReadData(mapOfCities);
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			} catch (OutOfBounds e1) {
+				e1.printStackTrace();
+			}
+
 			show.setForeground(Color.black);
 			age.setForeground(Color.black);
 			cityName.setForeground(Color.black);
@@ -525,6 +522,66 @@ public class Gui implements ActionListener, Runnable {
 				e1.printStackTrace();
 				error++;
 			}
+
+			if (e.getActionCommand().equals("filtering")) {
+				if (error > 0)
+					return;
+
+				
+				Traveller candidateTraveller = travellers.get(travellers.size() - 1);
+				int[] candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
+
+				ArrayList<Traveller> newT = new ArrayList<Traveller>();
+				
+				travellers.remove(travellers.size()-1);
+				newT = travellers;
+
+				for (int i = 0; i < newT.size()-1; i++) {
+					for (int y = newT.size()-1 ; y > i; y--) {
+						if (newT.get(i).getVisit().equals(newT.get(y).getVisit())) {
+							newT.remove(y);
+						}
+					}
+				}
+
+				Map<String, Integer> cityToRank = newT.stream().collect(Collectors.toMap(i -> i.getVisit(),
+						i -> innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)));
+
+				cityToRank.forEach((k, v) -> System.out.println("city:" + k + " rank: " + v));
+
+				Optional<RecommendedCity> recommendedCity = newT.stream()
+						.map(i -> new RecommendedCity(i.getVisit(),
+								innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)))
+						.max(Comparator.comparingInt(RecommendedCity::getRank));
+
+				System.out.println("The Recommended City:" + recommendedCity.get().getCity());
+								
+				String[] options = new String[2];
+				options[0] = new String("Save");
+				options[1] = new String("Cancel");
+
+				int reply = JOptionPane.showOptionDialog(null,"The city we chose for you is:"+recommendedCity.get().getCity(),"INFO", 0,JOptionPane.INFORMATION_MESSAGE,null,options,null);
+				if (reply == JOptionPane.YES_OPTION) { 
+					travellers.add(candidateTraveller);
+					Date date = new Date();
+					travellers.get(travellers.size()-1).setTimestamp(date.getTime());
+					 
+					travellers.get(travellers.size()-1).setVisit(recommendedCity.get().getCity());
+					for(int i = 0 ; i<travellers.size(); i++) {
+						System.out.println(i+" "+travellers.get(i).getVisit()+" "+travellers.get(i).getVatNumber());
+					}
+					saveTraveller(travellers);
+
+					if (calculateFreeTicket(travellers, mapOfCities.get(travellers.get(travellers.size()-1).getVisit()))
+							.equals(travellers.get(travellers.size() - 1).getVatNumber()))
+						JOptionPane.showMessageDialog(null,
+								"You get the free ticket for the city:" + travellers.get(travellers.size()-1).getVisit(),
+								"CONGRATS!", JOptionPane.PLAIN_MESSAGE);
+
+				}
+			  
+			} else if(e.getActionCommand().equals("Submit")) {
+
 
 			choosenCities = new ArrayList<City>();
 			searchCities = new ArrayList<String>();
@@ -615,106 +672,64 @@ public class Gui implements ActionListener, Runnable {
 				choosenCities.add(mapOfCities.get(searchCities.get(i)));
 			}
 
-			DefaultListModel<String> model = new DefaultListModel<String>();
-			try {
-				if (show() == 1) {
-					model.addElement(travellers.get(travellers.size() - 1).compareCities(choosenCities).getCityName()
-							+ "_"
-							+ travellers.get(travellers.size() - 1).compareCities(choosenCities).getCountryName());
-				} else {
+				DefaultListModel<String> model = new DefaultListModel<String>();
+				try {
+					if (show() == 1) {
+						model.addElement(travellers.get(travellers.size() - 1).compareCities(choosenCities)
+								.getCityName() + "_"
+								+ travellers.get(travellers.size() - 1).compareCities(choosenCities).getCountryName());
+					} else {
 
-					ArrayList<City> cities = travellers.get(travellers.size() - 1).compareCities(choosenCities, show());
-					for (int i = 0; i < cities.size(); i++) {
-						model.addElement(cities.get(i).getCityName() + "_" + cities.get(i).getCountryName());
+						ArrayList<City> cities = travellers.get(travellers.size() - 1).compareCities(choosenCities,
+								show());
+						for (int i = 0; i < cities.size(); i++) {
+							model.addElement(cities.get(i).getCityName() + "_" + cities.get(i).getCountryName());
+						}
 					}
+				} catch (InputMismatchException ex) {
+					show.setForeground(Color.red);
+					System.out.println("You can't give a character for input. Try again.");
+					error++;
+				} catch (OutOfBounds ex) {
+					show.setForeground(Color.red);
+					System.out.println(ex.getMessage());
+					error++;
+
+				} catch (ArrayIndexOutOfBoundsException ex) {
+					show.setForeground(Color.red);
+					System.out.println("You can enter an integer between 1 to " + searchCities.size());
+					error++;
 				}
-			} catch (InputMismatchException ex) {
-				show.setForeground(Color.red);
-				System.out.println("You can't give a character for input. Try again.");
-				error++;
-			} catch (OutOfBounds ex) {
-				show.setForeground(Color.red);
-				System.out.println(ex.getMessage());
-				error++;
 
-			} catch (ArrayIndexOutOfBoundsException ex) {
-				show.setForeground(Color.red);
-				System.out.println("You can enter an integer between 1 to " + searchCities.size());
-				error++;
-			}
+				if (error > 0)
+					return;
 
-			if (error > 0)
-				return;
+				JList<String> list = new JList<String>(model);
 
-			JList<String> list = new JList<String>(model);
+				Object[] options = { "Save", "Cancel" };
+				UIManager.put("OptionPane.minimumSize", new Dimension(600, 50));
+				int n = JOptionPane.showOptionDialog(null, list,
+						"Choose the city you want to visit. "
+								+ "The cities are sorted depending of what suits you the best.",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-			Object[] options = { "Save", "Cancel" };
-			UIManager.put("OptionPane.minimumSize", new Dimension(600, 50));
-			int n = JOptionPane.showOptionDialog(null, list,
-					"Choose the city you want to visit. "
-							+ "The cities are sorted depending of what suits you the best.",
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (n == JOptionPane.YES_OPTION) {
+					travellers.get(travellers.size() - 1).setVisit(list.getSelectedValue().toString());
+					if (calculateFreeTicket(travellers, mapOfCities.get(list.getSelectedValue().toString()))
+							.equals(travellers.get(travellers.size() - 1).getVatNumber()))
+						JOptionPane.showMessageDialog(null,
+								"You get the free ticket for the city:" + list.getSelectedValue().toString(),
+								"CONGRATS!", JOptionPane.PLAIN_MESSAGE);
 
-			if (n == JOptionPane.YES_OPTION) {
-				travellers.get(travellers.size() - 1).setVisit(list.getSelectedValue().toString());
-				if (calculateFreeTicket(travellers, mapOfCities.get(list.getSelectedValue().toString()))
-						.equals(travellers.get(travellers.size() - 1).getVatNumber()))
-					JOptionPane.showMessageDialog(null,
-							"You get the free ticket for the city:" + list.getSelectedValue().toString(), "CONGRATS!",
-							JOptionPane.PLAIN_MESSAGE);
-
-				Collections.sort(travellers);
-
-				Iterator<Traveller> itr = travellers.iterator();
-				while (itr.hasNext()) {
-					Traveller t = (Traveller) itr.next();
-					if (t.getTimestamp() == 0) {
-						itr.remove();
-					}
-
-					try {
-						json.writeJSON(travellers);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+					saveTraveller(travellers);
 				}
 
 			}
+		}if(e.getActionCommand().equals("show_travellers"))
 
-		}
-
-		if (e.getActionCommand().equals("show_travellers")) {
-			JOptionPane.showMessageDialog(null, seeTravellersNoDuplicates(travellers));
-		}
-		if (e.getActionCommand().equals("filtering")) {
-			Traveller candidateTraveller = travellers.get(travellers.size() - 1);
-			int[] candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
-
-			ArrayList<Traveller> newT = new ArrayList<Traveller>();
-			newT = travellers;
-
-			for (int i = 0; i < newT.size(); i++) {
-				for (int y = newT.size() - 1; y > i; y--) {
-					System.out.println(y);
-					if (newT.get(i).getVisit().equals(newT.get(y).getVisit())) {
-						newT.remove(y);
-					}
-				}
-			}
-
-			Map<String, Integer> cityToRank = newT.stream().collect(Collectors.toMap(i -> i.getVisit(),
-					i -> innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)));
-
-			cityToRank.forEach((k, v) -> System.out.println("city:" + k + " rank: " + v));
-
-			Optional<RecommendedCity> recommendedCity = travellers.stream()
-					.map(i -> new RecommendedCity(i.getVisit(),
-							innerDot(i.getRatingsOfInterests(), candidateTravellerCriteria)))
-					.max(Comparator.comparingInt(RecommendedCity::getRank));
-
-			System.out.println("The Recommended City:" + recommendedCity.get().getCity());
-		}
-
+	{
+		JOptionPane.showMessageDialog(null, seeTravellersNoDuplicates(travellers));
+	}
 	}
 
 	private static int innerDot(int[] currentTraveller, int[] candidateTraveller) {
@@ -759,6 +774,28 @@ public class Gui implements ActionListener, Runnable {
 
 		return (noDuplicatesSet);
 
+	}
+
+	public void saveTraveller(ArrayList<Traveller> travellers) {
+		Json json = new Json();
+		Collections.sort(travellers);
+
+		Iterator<Traveller> itr = travellers.iterator();
+		while (itr.hasNext()) {
+			Traveller t = (Traveller) itr.next();
+			if (t.getTimestamp() == 0) {
+				itr.remove();
+			}
+		}
+		for(int i = 0 ; i<travellers.size(); i++) {
+			System.out.println(i+" "+travellers.get(i).getVisit()+" "+travellers.get(i).getVatNumber()+" "+travellers.get(i).getTimestamp());
+		}
+
+		try {
+			json.writeJSON(travellers);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	@Override

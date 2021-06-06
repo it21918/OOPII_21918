@@ -21,11 +21,6 @@ import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
 public abstract class Traveller implements  Comparable<Traveller> {
 
-	/* This array contains the ratings of the user from 0-10 for the nouns */
-	private int[] termsVector = new int[10];
-
-	/* This array contains the latitude and longitude (lat, lon) of his/her City */
-	private double[] geodesicVector = new double[2];
 	private String vatNumber;
 	private int age;
 	private String cityName;
@@ -34,7 +29,9 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	private String visit;
 	private static final String appid = "6adefb3191788a7b0ffefbff19ba0448";
 
-
+	private int[] termsVector = new int[10];
+	private double[] geodesicVector = new double[2];
+	
 	public Traveller() {
 	}
 
@@ -235,16 +232,15 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	//of the newest traveler to 0 .
 	public int compareTo(Traveller traveller)
     {
-		if(vatNumber.equals(traveller.vatNumber)) {
+		if(this.vatNumber.equals(traveller.vatNumber)) {
 			if(Arrays.equals(this.termsVector, traveller.termsVector))
 			this.timestamp = 0;
 		}
         return  (int) (this.timestamp - traveller.timestamp);
     }
-
 	
-
-
 }
+
+
 
 
