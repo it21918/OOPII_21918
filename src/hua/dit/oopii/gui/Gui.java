@@ -567,9 +567,7 @@ public class Gui implements ActionListener, Runnable {
 					travellers.get(travellers.size()-1).setTimestamp(date.getTime());
 					 
 					travellers.get(travellers.size()-1).setVisit(recommendedCity.get().getCity());
-					for(int i = 0 ; i<travellers.size(); i++) {
-						System.out.println(i+" "+travellers.get(i).getVisit()+" "+travellers.get(i).getVatNumber());
-					}
+					
 					saveTraveller(travellers);
 
 					if (calculateFreeTicket(travellers, mapOfCities.get(travellers.get(travellers.size()-1).getVisit()))
@@ -786,9 +784,6 @@ public class Gui implements ActionListener, Runnable {
 			if (t.getTimestamp() == 0) {
 				itr.remove();
 			}
-		}
-		for(int i = 0 ; i<travellers.size(); i++) {
-			System.out.println(i+" "+travellers.get(i).getVisit()+" "+travellers.get(i).getVatNumber()+" "+travellers.get(i).getTimestamp());
 		}
 
 		try {
