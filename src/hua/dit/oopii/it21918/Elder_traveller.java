@@ -26,7 +26,7 @@ public class Elder_traveller extends Traveller {
 	public double similarityTermsVector(City obj) {
 		double sum = 0;
 		for (int i = 0; i < 10; i++) {
-			sum = sum + Math.pow(obj.getTermsVector(i) - getRatingsOfInterests(i), 2);
+			sum = sum + Math.pow(obj.getTermsVector(i) - getRatingsOfInterest(i), 2);
 		}
 		return 1 / (1 + Math.sqrt(sum));
 	}

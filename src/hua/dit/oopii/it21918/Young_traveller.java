@@ -28,10 +28,10 @@ public class Young_traveller extends Traveller {
 		double sumInterseption = 0, sumUnion = 0;
 
 		for (int i = 0; i < 10; i++) {
-			if (obj.getTermsVector(i) > 1 && getRatingsOfInterests(i) > 1) {
+			if (obj.getTermsVector(i) > 1 && getRatingsOfInterest(i) > 1) {
 				sumInterseption += 1;
 			}
-			if (obj.getTermsVector(i) > 1 || getRatingsOfInterests(i) > 1) {
+			if (obj.getTermsVector(i) > 1 || getRatingsOfInterest(i) > 1) {
 				sumUnion += 1;
 			}
 		}

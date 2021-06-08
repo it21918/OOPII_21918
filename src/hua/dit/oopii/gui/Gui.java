@@ -1,4 +1,6 @@
 
+  
+
 package hua.dit.oopii.gui;
 
 import java.awt.Choice;
@@ -528,13 +530,14 @@ public class Gui implements ActionListener, Runnable {
 					return;
 
 				
-				Traveller candidateTraveller = travellers.get(travellers.size() - 1);
+				Traveller candidateTraveller = travellers.remove(travellers.size()-1);
 				int[] candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
 
 				ArrayList<Traveller> newT = new ArrayList<Traveller>();
 				
-				travellers.remove(travellers.size()-1);
-				newT = travellers;
+				for(int i=0 ; i<travellers.size(); i++) {
+					newT.add(travellers.get(i));
+				}
 
 				for (int i = 0; i < newT.size()-1; i++) {
 					for (int y = newT.size()-1 ; y > i; y--) {
@@ -562,12 +565,10 @@ public class Gui implements ActionListener, Runnable {
 
 				int reply = JOptionPane.showOptionDialog(null,"The city we chose for you is:"+recommendedCity.get().getCity(),"INFO", 0,JOptionPane.INFORMATION_MESSAGE,null,options,null);
 				if (reply == JOptionPane.YES_OPTION) { 
-					travellers.add(candidateTraveller);
 					Date date = new Date();
-					travellers.get(travellers.size()-1).setTimestamp(date.getTime());
-					 
-					travellers.get(travellers.size()-1).setVisit(recommendedCity.get().getCity());
-					
+					candidateTraveller.setTimestamp(date.getTime());
+					candidateTraveller.setVisit(recommendedCity.get().getCity());
+					travellers.add(candidateTraveller);
 					saveTraveller(travellers);
 
 					if (calculateFreeTicket(travellers, mapOfCities.get(travellers.get(travellers.size()-1).getVisit()))

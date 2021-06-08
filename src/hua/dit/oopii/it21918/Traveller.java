@@ -1,11 +1,11 @@
 package hua.dit.oopii.it21918;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -19,7 +19,8 @@ import hua.dit.oopii.exception.CountryException;
 import hua.dit.oopii.exception.OutOfBounds;
 import gr.hua.dit.oopii.weather.OpenWeatherMap;
 
-public abstract class Traveller implements  Comparable<Traveller> {
+public abstract class Traveller implements  Comparable<Traveller>, Serializable  {
+    private static final long serialVersionUID = 1L;
 
 	private String vatNumber;
 	private int age;
@@ -88,7 +89,7 @@ public abstract class Traveller implements  Comparable<Traveller> {
 		return termsVector;
 	} 
 
-	public int getRatingsOfInterests(int pos) {
+	public int getRatingsOfInterest(int pos) {
 		return termsVector[pos];
 	}
 
@@ -112,6 +113,8 @@ public abstract class Traveller implements  Comparable<Traveller> {
 	public Double getCoordinatesLon() {
 		return geodesicVector[1];
 	}
+	
+
 
 	// The method retrieves the lat and lon of the user city.
 	public void retrieveLatLon() throws JsonParseException, JsonMappingException, IOException, CountryException {
@@ -237,6 +240,17 @@ public abstract class Traveller implements  Comparable<Traveller> {
 			this.timestamp = 0;
 		}
         return  (int) (this.timestamp - traveller.timestamp);
+    }
+    @Override
+    public String toString() {
+        return "Traveller{" +
+                "VAT number='" + vatNumber + '\'' +
+                ", age=" + age +
+                ", visit='" + visit + '\'' +
+                ", criteria=" + Arrays.toString(termsVector) +
+                ", lat & lon=" + Arrays.toString(geodesicVector) +
+                ", timestamp ='" + timestamp + '\'' +
+                '}';
     }
 	
 }

@@ -36,7 +36,7 @@ class AllTravellers {
 	private ArrayList<Traveller> collectionAllTravellers;
 
 	public ArrayList<Traveller> getCollectionAllTravellers() {
-		return collectionAllTravellers;
+		return this.collectionAllTravellers;
 	}
 
 	public void setCollectionAllTravellers(ArrayList<Traveller> collectionAllTravellers) {

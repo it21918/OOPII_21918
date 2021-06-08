@@ -29,9 +29,9 @@ public class Middle_traveller extends Traveller {
 		double sum1 = 0, sum2 = 0, sum3 = 0;
 
 		for (int i = 0; i < 10; i++) {
-			sum1 = sum1 + (obj.getTermsVector(i) * getRatingsOfInterests(i));
+			sum1 = sum1 + (obj.getTermsVector(i) * getRatingsOfInterest(i));
 			sum2 = sum2 + Math.pow(obj.getTermsVector(i), 2);
-			sum3 = sum3 + Math.pow(getRatingsOfInterests(i), 2);
+			sum3 = sum3 + Math.pow(getRatingsOfInterest(i), 2);
 		}
 
 		if (sum2 == 0 || sum3 == 0) {
