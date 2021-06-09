@@ -1,6 +1,3 @@
-
-  
-
 package hua.dit.oopii.gui;
 
 import java.awt.Choice;
@@ -21,6 +18,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -531,7 +529,7 @@ public class Gui implements ActionListener, Runnable {
 
 				
 				Traveller candidateTraveller = travellers.remove(travellers.size()-1);
-				int[] candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
+				Vector<Integer> candidateTravellerCriteria = candidateTraveller.getRatingsOfInterests();
 
 				ArrayList<Traveller> newT = new ArrayList<Traveller>();
 				
@@ -731,10 +729,10 @@ public class Gui implements ActionListener, Runnable {
 	}
 	}
 
-	private static int innerDot(int[] currentTraveller, int[] candidateTraveller) {
+	private static int innerDot(Vector<Integer> vector, Vector<Integer> candidateTravellerCriteria) {
 		int sum = 0;
 		for (int i = 0; i < 10; i++)
-			sum += currentTraveller[i] * candidateTraveller[i];
+			sum += vector.get(i) * candidateTravellerCriteria.get(i);
 		return sum;
 
 	}

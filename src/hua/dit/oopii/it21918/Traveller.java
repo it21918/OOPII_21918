@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Vector;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -30,8 +32,8 @@ public abstract class Traveller implements  Comparable<Traveller>, Serializable 
 	private String visit;
 	private static final String appid = "6adefb3191788a7b0ffefbff19ba0448";
 
-	private int[] termsVector = new int[10];
-	private double[] geodesicVector = new double[2];
+	private Vector<Integer> termsVector = new Vector<>(10);
+	private Vector<Double> geodesicVector = new Vector<>(2);
 	
 	public Traveller() {
 	}
@@ -75,43 +77,44 @@ public abstract class Traveller implements  Comparable<Traveller>, Serializable 
 	}
 
 	/* This method adds an integer from 0 to 10 to the terms_vector */
-	public void addRatingOfterms(int pos,int term) throws OutOfBounds {
+	public void addRatingOfterms(int term) throws OutOfBounds {
+		int pos=1;
 		if(pos >=11 || pos<=-1) {
 			throw new OutOfBounds(pos,"0 to 10");
 		}else {
-			this.termsVector[pos]=term;	
+			this.termsVector.add(term);	
 		}
 	}
 
 
 	/* This method returns all the ratings from the terms_vector */
-	public int[] getRatingsOfInterests() {
+	public Vector<Integer> getRatingsOfInterests() {
 		return termsVector;
 	} 
 
 	public int getRatingsOfInterest(int pos) {
-		return termsVector[pos];
+		return termsVector.get(pos);
 	}
 
 	/* This method adds the lat and lon of the City the user is currently */
-	public void addLocation(Double lat, Double lon) {
-		 this.geodesicVector[0]=lat;
-		 this.geodesicVector[1]=lon;
+	public void addLocation(Double double1, Double double2) {
+		 this.geodesicVector.add(double1);
+		 this.geodesicVector.add(double2);
 	}
 
 	/* This method returns the lat lon from the geodesic_vector */
-	public double[] getLocation() {
+	public Vector<Double> getLocation() {
 		return geodesicVector;
 	}
 
 	/* This method returns the Lat of the City */
 	public Double getCoordinatesLat() {
-		return geodesicVector[0];
+		return geodesicVector.get(0);
 	}
 
 	/* This method return the Lon of the City */
 	public Double getCoordinatesLon() {
-		return geodesicVector[1];
+		return geodesicVector.get(1);
 	}
 	
 
@@ -236,7 +239,7 @@ public abstract class Traveller implements  Comparable<Traveller>, Serializable 
 	public int compareTo(Traveller traveller)
     {
 		if(this.vatNumber.equals(traveller.vatNumber)) {
-			if(Arrays.equals(this.termsVector, traveller.termsVector))
+			if(this.termsVector.equals(traveller.termsVector))
 			this.timestamp = 0;
 		}
         return  (int) (this.timestamp - traveller.timestamp);
@@ -247,8 +250,8 @@ public abstract class Traveller implements  Comparable<Traveller>, Serializable 
                 "VAT number='" + vatNumber + '\'' +
                 ", age=" + age +
                 ", visit='" + visit + '\'' +
-                ", criteria=" + Arrays.toString(termsVector) +
-                ", lat & lon=" + Arrays.toString(geodesicVector) +
+                ", criteria=" + (termsVector) +
+                ", lat & lon=" + (geodesicVector) +
                 ", timestamp ='" + timestamp + '\'' +
                 '}';
     }
